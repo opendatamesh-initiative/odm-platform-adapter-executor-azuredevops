@@ -33,7 +33,6 @@ License.
     <artifactId>odm-platform-up-services-executor-azuredevops</artifactId>
     <name>Azure DevOps Executor</name>
 
-
     <description>Implementation of Azure DevOps executor</description>
     <version>0.0.1-SNAPSHOT</version>
     <url>https://github.com/opendatamesh-initiative/odm-platform-up-services-executor-azuredevops</url>
@@ -66,5 +65,9 @@ License.
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
+
+    <modules>
+        <module>azuredevops-server</module>
+    </modules>
 
 </project>
