@@ -1,0 +1,5 @@
+{
+    "callbackRef": "my/callback/url",
+    "template": "{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}",
+    "configurations": "{\"stagesToSkip\":[]}" //"{\"stagesToSkip\":[\"Test\", \"Deploy\"]}"
+}
