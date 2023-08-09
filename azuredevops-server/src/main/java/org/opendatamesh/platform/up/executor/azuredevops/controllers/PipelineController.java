@@ -1,61 +1,55 @@
 package org.opendatamesh.platform.up.executor.azuredevops.controllers;
 
-import org.opendatamesh.platform.up.executor.azuredevops.services.OAuthTokenService;
-import org.opendatamesh.platform.up.executor.azuredevops.services.RunPipelineService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.opendatamesh.platform.up.executor.api.controllers.AbstractExecutorController;
+import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
+import org.opendatamesh.platform.up.executor.azuredevops.resources.ConfigurationsResource;
+import org.opendatamesh.platform.up.executor.azuredevops.resources.TemplateResource;
+import org.opendatamesh.platform.up.executor.azuredevops.services.PipelineService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
-@RequestMapping(
-        value = "/pipelines",
-        produces = { "application/json" }
-)
-@Validated
-public class PipelineController {
+public class PipelineController extends AbstractExecutorController {
 
     @Autowired
-    OAuthTokenService oAuthTokenService;
+    private PipelineService pipelineService;
 
-    @Autowired
-    RunPipelineService runPipelineService;
+    @Override
+    public TaskResource createTask(TaskResource task) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        TemplateResource template;
+        ConfigurationsResource configurations;
 
-    // TODO delete, this is only for tests
-    @GetMapping("/get-runs")
-    public String getRuns(
-            @RequestParam(name = "pipelineUri", required = true) String pipelineUri
-    ) {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(oAuthTokenService.getToken());
+        try {
+            // TODO handle null values
+            template = objectMapper.readValue(task.getTemplate(), TemplateResource.class);
+            configurations = objectMapper.readValue(task.getConfigurations(), ConfigurationsResource.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
-        HttpEntity<String> entity = new HttpEntity<>(headers);
+        String organization = template.getOrganization();
+        String project = template.getProject();
+        String pipelineId = template.getPipelineId();
+        String branch = template.getBranch();
 
-        return restTemplate.exchange(pipelineUri, HttpMethod.GET, entity, String.class).getBody();
+        List<String> stagesToSkip = configurations.getStagesToSkip();
+
+        String callbackRef = task.getCallbackRef();
+
+        String result = pipelineService.runPipeline(organization, project, pipelineId, branch, callbackRef, stagesToSkip);
+
+        // task.setResults(result);
+
+        return task;
     }
 
-    @PostMapping("/run")
-    public String runPipeline(
-            @RequestParam(name = "pipelineUri", required = true) String pipelineUri,
-            @RequestParam(name = "branch", required = true) String branch
-    ) {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(oAuthTokenService.getToken());
-
-        String requestBody = runPipelineService.getRunPipelineRequestBody(branch);
-
-        HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
-
-        // TODO decide what to return
-        return restTemplate.postForObject(pipelineUri, entity, String.class);
+    @Override
+    public TaskResource readTask(Long id) {
+        throw new UnsupportedOperationException("Unimplemented method 'readTask'");
     }
-
 }
