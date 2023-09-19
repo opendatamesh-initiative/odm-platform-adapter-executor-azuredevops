@@ -3,7 +3,7 @@ version: '3.3'
 services:
 
   # Spring boot app
-  policyservice:
+  executor-azuredevops:
     build:
       context: .
       dockerfile: Dockerfile
