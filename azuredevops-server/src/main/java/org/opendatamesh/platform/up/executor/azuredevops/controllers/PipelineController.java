@@ -49,7 +49,8 @@ public class PipelineController extends AbstractExecutorController {
     }
 
     @Override
-    public TaskResource readTask(Long id) {
+    public TaskResource readTask(TaskResource task) {
         throw new UnsupportedOperationException("Unimplemented method 'readTask'");
     }
+
 }

@@ -1,0 +1,32 @@
+##########################
+# Server configuration
+##########################
+app:
+  workdir:
+
+server:
+  port: ${SPRING_PORT}
+  error:
+    include-message: always
+  servlet:
+    context-path: /api/v1/up/executor/azure-devops
+
+############################################
+# Spring configurations
+############################################
+spring:
+  # Profile
+  profile: dev
+  # Security
+  security:
+    oauth2:
+      client:
+        registration:
+          azure-devops:
+            authorization-grant-type: client_credentials
+            client-id: ${AZURE_ODM_APP_CLIENT_ID}
+            client-secret: ${AZURE_ODM_APP_CLIENT_SECRET}
+            scope: 499b84ac-1321-427f-aa17-267ca6975798/.default
+        provider:
+          azure-devops:
+            token-uri: https://login.microsoftonline.com/${AZURE_TENANT_ID}/oauth2/v2.0/token

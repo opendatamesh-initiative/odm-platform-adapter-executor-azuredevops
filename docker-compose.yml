@@ -1,0 +1,19 @@
+version: '3.3'
+
+services:
+
+  # Spring boot app
+  policyservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SPRING_PROFILES_ACTIVE: "docker"
+        JAVA_OPTS: ""
+        SPRING_PORT: "${SPRING_PORT}"
+        AZURE_ODM_APP_CLIENT_ID: "${AZURE_ODM_APP_CLIENT_ID}"
+        AZURE_ODM_APP_CLIENT_SECRET: "${AZURE_ODM_APP_CLIENT_SECRET}"
+        AZURE_TENANT_ID: "${AZURE_TENANT_ID}"
+    env_file: .env
+    ports:
+      - "${SPRING_PORT}:${SPRING_PORT}"
