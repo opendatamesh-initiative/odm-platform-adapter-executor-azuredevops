@@ -224,7 +224,6 @@ docker-compose build --no-cache
 # Test it
 
 ## REST services
-
 You can invoke REST endpoints through *OpenAPI UI* available at the following url:
 
 * [http://localhost:9003//api/v1/up/executor/azure-devops/swagger-ui/index.html](http://localhost:9003/api/v1/up/executor/azure-devops/swagger-ui/index.html)
