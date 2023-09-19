@@ -84,7 +84,7 @@ License.
                 <repository>
                     <id>github</id>
                     <name>GitHub Packages</name>
-                    <url>https://maven.pkg.github.com/opendatamesh-initiative/odm-platform-up-services-executore-azuredevops/</url>
+                    <url>https://maven.pkg.github.com/opendatamesh-initiative/odm-platform-up-services-executor-azuredevops/</url>
                 </repository>
             </distributionManagement>
         </profile>
