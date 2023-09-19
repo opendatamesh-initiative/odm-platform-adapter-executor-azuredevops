@@ -1,4 +1,8 @@
 # Open Data Mesh adapter for Azure DevOps
+
+[![Build](https://github.com/opendatamesh-initiative/odm-platform-up-services-executor-azuredevops/workflows/odm-platform-up-services-executor-azuredevops%20CI/badge.svg)](https://github.com/opendatamesh-initiative/odm-platform-up-services-executor-azuredevops/actions) [![Release](https://github.com/opendatamesh-initiative/odm-platform-up-services-executor-azuredevops/workflows/odm-platform-up-services-executor-azuredevops%20CI%2FCD/badge.svg)](https://github.com/opendatamesh-initiative/odm-platform-up-services-executor-azuredevops/actions)
+
+
 Open Data Mesh Platform is a platform that manages the full lifecycle of a data product from deployment to retirement. It uses the Data Product Descriptor Specification to create, deploy and operate data product containers in a mesh architecture. This repository contains the services exposed by the executor of Azure DevOps tasks.
 
 # Azure Environment
