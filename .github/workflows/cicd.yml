@@ -1,10 +1,10 @@
-name: odm-platform-up-services-policy-opa CI/CD
+name: odm-platform-up-services-executor-azuredevops CI/CD
 on:
   push:
     tags:
       - '*'
 env:
-  IMAGE_NAME: odm-platform-up-services-policy-opa
+  IMAGE_NAME: odm-platform-up-services-executor-azuredevops
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
