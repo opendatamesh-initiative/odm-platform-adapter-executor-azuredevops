@@ -73,4 +73,12 @@
         </dependency>
     </dependencies>
 
+    <repositories>
+        <repository>
+            <id>github</id>
+            <name>GitHub ODM Apache Maven Packages</name>
+            <url>https://github.com/opendatamesh-initiative/odm-platform/packages</url>
+        </repository>
+    </repositories>
+
 </project>
