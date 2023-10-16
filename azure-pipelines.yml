@@ -1,5 +1,15 @@
 trigger: none
 
+parameters:
+  - name: GITHUB_USERNAME
+    displayName: GITHUB_USERNAME
+    type: string
+    default: 'yourUsername'
+  - name: GITHUB_PASSWORD
+    displayName: GITHUB_PASSWORD
+    type: string
+    default: 'yourPasswordOrToken'
+
 variables:
   - name: GITHUB_USERNAME
     value: yourUser
