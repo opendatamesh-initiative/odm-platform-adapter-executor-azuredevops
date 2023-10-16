@@ -10,12 +10,6 @@ parameters:
     type: string
     default: 'yourPasswordOrToken'
 
-variables:
-  - name: GITHUB_USERNAME
-    value: yourUser
-  - name: GITHUB_PASSWORD
-    value: yourPassword
-
 stages:
   - stage: build
     jobs:
