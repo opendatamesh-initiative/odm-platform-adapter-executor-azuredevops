@@ -1,5 +1,11 @@
 trigger: none
 
+variables:
+  - name: GITHUB_USERNAME
+    value: yourUser
+  - name: GITHUB_PASSWORD
+    value: yourPassword
+
 stages:
   - stage: build
     jobs:
