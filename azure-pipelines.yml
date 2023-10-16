@@ -11,7 +11,7 @@ stages:
           - task: Maven@3
             inputs:
               mavenPomFile: 'pom.xml'
-              mavenOptions: '-DGITHUB_USERNAME=$(GITHUB_USERNAME) -DGITHUB_PASSWORD=$(GITHUB_PASSWORD) --settings settings.xml -DskipTests'
+              options: '--settings settings.xml -DGITHUB_USERNAME=$(GITHUB_USERNAME) -DGITHUB_PASSWORD=$(GITHUB_PASSWORD) -DskipTests'
               #javaHomeOption: 'JDKVersion'
               jdkVersionOption: '17'
               #jdkArchitectureOption: 'x64'
