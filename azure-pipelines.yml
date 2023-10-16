@@ -1,15 +1,5 @@
 trigger: none
 
-parameters:
-  - name: GITHUB_USERNAME
-    displayName: GITHUB_USERNAME
-    type: string
-    default: 'yourUsername'
-  - name: GITHUB_PASSWORD
-    displayName: GITHUB_PASSWORD
-    type: string
-    default: 'yourPasswordOrToken'
-
 stages:
   - stage: build
     jobs:
@@ -21,7 +11,7 @@ stages:
           - task: Maven@3
             inputs:
               mavenPomFile: 'pom.xml'
-              options: '--settings settings.xml -DGITHUB_USERNAME=${{ parameters.GITHUB_USERNAME}} -DGITHUB_PASSWORD=${{ parameters.GITHUB_PASSWORD}} -DskipTests'
+              options: '--settings settings.xml -DGITHUB_USERNAME=$(GITHUB_USERNAME) -DGITHUB_PASSWORD=(GITHUB_PASSWORD) -DskipTests'
               #javaHomeOption: 'JDKVersion'
               jdkVersionOption: '17'
               #jdkArchitectureOption: 'x64'
@@ -45,3 +35,4 @@ stages:
               sshEndpoint: "odm-platform"
               runOptions: 'script' # Options: commands, script, inline
               scriptPath: "deployScript.sh" # Required when runOptions == Script
+              args: "$(AZURE_ODM_APP_CLIENT_ID) $(AZURE_ODM_APP_CLIENT_SECRET) $(AZURE_TENANT_ID)"
