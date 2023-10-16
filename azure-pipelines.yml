@@ -17,7 +17,7 @@ stages:
               #jdkArchitectureOption: 'x64'
               #publishJUnitResults: true
               #testResultsFiles: '**/TEST-*.xml'
-              goals: 'clean package spring-boot:repackage -DskipTests'
+              goals: 'install -DskipTests'
 
           # Deploy
           ## Copy files or build artifacts to a remote machine over SSH
