@@ -11,13 +11,13 @@ stages:
           - task: Maven@3
             inputs:
               mavenPomFile: 'pom.xml'
-              #mavenOptions: '-Xmx3072m'
+              mavenOptions: '-DGITHUB_USERNAME=$(GITHUB_USERNAME) -DGITHUB_PASSWORD=$(GITHUB_PASSWORD) --settings settings.xml -DskipTests'
               #javaHomeOption: 'JDKVersion'
               jdkVersionOption: '17'
               #jdkArchitectureOption: 'x64'
               #publishJUnitResults: true
               #testResultsFiles: '**/TEST-*.xml'
-              goals: 'install -DskipTests'
+              goals: 'install'
 
           # Deploy
           ## Copy files or build artifacts to a remote machine over SSH
