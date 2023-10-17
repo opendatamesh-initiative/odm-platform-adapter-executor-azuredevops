@@ -4,6 +4,9 @@ export AZURE_ODM_APP_CLIENT_ID=$1
 export AZURE_ODM_APP_CLIENT_SECRET=$2
 export AZURE_TENANT_ID=$3
 
+echo AZURE_TENANT_ID: $AZURE_TENANT_ID
+nohup echo AZURE_TENANT_ID_nohup: $AZURE_TENANT_ID
+
 sudo apt-get update ; sudo apt-get install dialog apt-utils -y; sudo apt-get install openjdk-17-jdk openjdk-17-jre -y
 
 #mkdir -p /home/$USER/src/main/resources/db/migration && cp /home/$USER/data.csv /home/$USER/src/main/resources/db/migration/data.csv
