@@ -1,5 +1,8 @@
 trigger: none
 
+variables:
+  - group: ODM-Platform
+
 stages:
   - stage: build
     jobs:
@@ -11,7 +14,7 @@ stages:
           - task: Maven@3
             inputs:
               mavenPomFile: 'pom.xml'
-              options: '--settings settings.xml -DGITHUB_USERNAME=$(GITHUB_USERNAME) -DGITHUB_PASSWORD=(GITHUB_PASSWORD) -DskipTests'
+              options: '--settings settings.xml -DGITHUB_USERNAME=$(GITHUB_USERNAME) -DGITHUB_PASSWORD=$(GITHUB_PASSWORD) -DskipTests'
               #javaHomeOption: 'JDKVersion'
               jdkVersionOption: '17'
               #jdkArchitectureOption: 'x64'
