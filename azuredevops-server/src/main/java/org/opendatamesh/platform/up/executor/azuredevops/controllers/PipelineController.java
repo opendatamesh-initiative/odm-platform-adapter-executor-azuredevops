@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class PipelineController extends AbstractExecutorController {
@@ -38,10 +39,11 @@ public class PipelineController extends AbstractExecutorController {
         String branch = template.getBranch();
 
         List<String> stagesToSkip = configurations.getStagesToSkip();
+        Map<String, String> params = configurations.getParams();
 
         String callbackRef = task.getCallbackRef();
 
-        String result = pipelineService.runPipeline(organization, project, pipelineId, branch, callbackRef, stagesToSkip);
+        String result = pipelineService.runPipeline(organization, project, pipelineId, branch, callbackRef, stagesToSkip, params);
 
         // task.setResults(result);
 
