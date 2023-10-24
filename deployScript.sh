@@ -1,5 +1,8 @@
 #!/bin/bash
 
+export DEBIAN_FRONTEND=noninteractive
+echo 'debconf debconf/frontend select Noninteractive' | sudo debconf-set-selections
+
 export AZURE_ODM_APP_CLIENT_ID=$1
 export AZURE_ODM_APP_CLIENT_SECRET=$2
 export AZURE_TENANT_ID=$3
