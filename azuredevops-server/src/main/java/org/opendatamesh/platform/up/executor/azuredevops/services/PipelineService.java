@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class PipelineService {
@@ -20,7 +21,7 @@ public class PipelineService {
     @Autowired
     private OAuthTokenManager oAuthTokenManager;
 
-    private String buildRunPipelineRequestBody(String branch, String callbackRef, List<String> stagesToSkip) {
+    private String buildRunPipelineRequestBody(String branch, String callbackRef, List<String> stagesToSkip, Map<String, String> params) {
         ObjectMapper objectMapper = new ObjectMapper();
 
         ObjectNode jsonRoot = objectMapper.createObjectNode();
@@ -37,8 +38,10 @@ public class PipelineService {
 
         // Template parameters
         ObjectNode templateParametersNode = objectMapper.createObjectNode();
-
         templateParametersNode.put("callbackRef", callbackRef);
+        if(params != null) {
+            params.forEach(templateParametersNode::put);
+        }
         jsonRoot.set("templateParameters", templateParametersNode);
 
         // Stages to skip
@@ -53,13 +56,13 @@ public class PipelineService {
         return String.format(pipelineUri, organization, project, pipelineId);
     }
 
-    public String runPipeline(String organization, String project, String pipelineId, String branch, String callbackRef, List<String> stagesToSkip) {
+    public String runPipeline(String organization, String project, String pipelineId, String branch, String callbackRef, List<String> stagesToSkip, Map<String, String> params) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(oAuthTokenManager.getToken());
 
-        String requestBody = buildRunPipelineRequestBody(branch, callbackRef, stagesToSkip);
+        String requestBody = buildRunPipelineRequestBody(branch, callbackRef, stagesToSkip, params);
         HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
 
         String pipelineUri = buildRunPipelineUri(organization, project, pipelineId);

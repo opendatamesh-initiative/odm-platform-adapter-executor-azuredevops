@@ -9,7 +9,7 @@ server:
   error:
     include-message: always
   servlet:
-    context-path: /api/v1/up/executor/azure-devops
+    context-path: /api/v1/up/executor
 
 ############################################
 # Spring configurations
