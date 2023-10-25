@@ -4,14 +4,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.up.executor.azuredevops.components.OAuthTokenManager;
+import org.opendatamesh.platform.up.executor.azuredevops.mappers.PipelineMapper;
+import org.opendatamesh.platform.up.executor.azuredevops.resources.azure.PipelineResource;
+import org.opendatamesh.platform.up.executor.azuredevops.resources.odm.ConfigurationsResource;
+import org.opendatamesh.platform.up.executor.azuredevops.resources.odm.TemplateResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,34 +25,13 @@ public class PipelineService {
     @Autowired
     private OAuthTokenManager oAuthTokenManager;
 
-    private String buildRunPipelineRequestBody(String branch, String callbackRef, List<String> stagesToSkip, Map<String, String> params) {
-        ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    protected PipelineMapper pipelineMapper;
 
-        ObjectNode jsonRoot = objectMapper.createObjectNode();
 
-        // Resources
-        ObjectNode resourcesNode = objectMapper.createObjectNode();
-        ObjectNode repositoriesNode = objectMapper.createObjectNode();
-        ObjectNode selfNode = objectMapper.createObjectNode();
-
-        selfNode.put("refName", String.format("refs/heads/%s", branch));
-        repositoriesNode.set("self", selfNode);
-        resourcesNode.set("repositories", repositoriesNode);
-        jsonRoot.set("resources", resourcesNode);
-
-        // Template parameters
-        ObjectNode templateParametersNode = objectMapper.createObjectNode();
-        templateParametersNode.put("callbackRef", callbackRef);
-        if(params != null) {
-            params.forEach(templateParametersNode::put);
-        }
-        jsonRoot.set("templateParameters", templateParametersNode);
-
-        // Stages to skip
-        ArrayNode stagesToSkipArray = objectMapper.valueToTree(stagesToSkip);
-        jsonRoot.set("stagesToSkip", stagesToSkipArray);
-
-        return jsonRoot.toString();
+    private PipelineResource buildRunPipelineRequestBody(ConfigurationsResource configurationsResource, TemplateResource templateResource, String callbackRef) {
+        PipelineResource pipelineResource = pipelineMapper.toAzurePipelineResource(configurationsResource, templateResource, callbackRef);
+        return pipelineResource;
     }
 
     private String buildRunPipelineUri(String organization, String project, String pipelineId) {
@@ -56,18 +39,21 @@ public class PipelineService {
         return String.format(pipelineUri, organization, project, pipelineId);
     }
 
-    public String runPipeline(String organization, String project, String pipelineId, String branch, String callbackRef, List<String> stagesToSkip, Map<String, String> params) {
+
+    public String runPipeline(ConfigurationsResource configurationsResource, TemplateResource templateResource, String callbackRef) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(oAuthTokenManager.getToken());
 
-        String requestBody = buildRunPipelineRequestBody(branch, callbackRef, stagesToSkip, params);
-        HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
+        PipelineResource requestBody = buildRunPipelineRequestBody(configurationsResource, templateResource, callbackRef);
+        HttpEntity<PipelineResource> entity = new HttpEntity<>(requestBody, headers);
 
-        String pipelineUri = buildRunPipelineUri(organization, project, pipelineId);
+        String pipelineUri = buildRunPipelineUri(templateResource.getOrganization(), templateResource.getProject(), templateResource.getPipelineId());
+        ResponseEntity<String> response = restTemplate.postForEntity(pipelineUri, entity, String.class);
 
-        // TODO decide what to return
-        return restTemplate.postForObject(pipelineUri, entity, String.class);
+        System.out.println("Code" + response.getStatusCode());
+        System.out.println(response.getBody());
+        return response.getBody();
     }
 }
