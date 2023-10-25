@@ -1,8 +1,5 @@
 package org.opendatamesh.platform.up.executor.azuredevops.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.up.executor.azuredevops.components.OAuthTokenManager;
 import org.opendatamesh.platform.up.executor.azuredevops.mappers.PipelineMapper;
 import org.opendatamesh.platform.up.executor.azuredevops.resources.azure.PipelineResource;
@@ -15,9 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class PipelineService {
