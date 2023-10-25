@@ -52,8 +52,6 @@ public class PipelineService {
         String pipelineUri = buildRunPipelineUri(templateResource.getOrganization(), templateResource.getProject(), templateResource.getPipelineId());
         ResponseEntity<String> response = restTemplate.postForEntity(pipelineUri, entity, String.class);
 
-        System.out.println("Code" + response.getStatusCode());
-        System.out.println(response.getBody());
         return response.getBody();
     }
 }
