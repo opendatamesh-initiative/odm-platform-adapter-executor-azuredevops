@@ -10,9 +10,6 @@ import org.opendatamesh.platform.up.executor.azuredevops.services.PipelineServic
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Map;
-
 @RestController
 public class PipelineController extends AbstractExecutorController {
 
@@ -35,7 +32,9 @@ public class PipelineController extends AbstractExecutorController {
 
         String callbackRef = task.getCallbackRef();
 
-        String result = pipelineService.runPipeline(configurations, template, callbackRef);
+        pipelineService.runPipeline(configurations, template, callbackRef);
+
+        // TODO: if needed, update task resource after the pipeline completion
 
         return task;
     }
