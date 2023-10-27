@@ -30,7 +30,7 @@ public class PipelineController extends AbstractExecutorController {
         if(task.getConfigurations() == null)
             throw new UnprocessableEntityException(
                     ExecutorApiStandardErrors.SC422_05_TASK_IS_INVALID,
-                    "Task hasn't any configuration");
+                    "Configuration isn't specified in the task");
         if(task.getTemplate() == null)
             throw new UnprocessableEntityException(
                     ExecutorApiStandardErrors.SC422_05_TASK_IS_INVALID,
