@@ -1,9 +1,9 @@
-package org.opendatamesh.platform.up.executor.azuredevops.mappers;
+package org.opendatamesh.platform.up.executor.azuredevops.server.mappers;
 
 import org.mapstruct.*;
-import org.opendatamesh.platform.up.executor.azuredevops.resources.azure.PipelineResource;
-import org.opendatamesh.platform.up.executor.azuredevops.resources.odm.ConfigurationsResource;
-import org.opendatamesh.platform.up.executor.azuredevops.resources.odm.TemplateResource;
+import org.opendatamesh.platform.up.executor.azuredevops.api.resources.PipelineResource;
+import org.opendatamesh.platform.up.executor.azuredevops.server.resources.odm.ConfigurationsResource;
+import org.opendatamesh.platform.up.executor.azuredevops.server.resources.odm.TemplateResource;
 
 import java.util.HashMap;
 

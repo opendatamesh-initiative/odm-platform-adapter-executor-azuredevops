@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.up.executor.azuredevops.components;
+package org.opendatamesh.platform.up.executor.azuredevops.api.components;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
