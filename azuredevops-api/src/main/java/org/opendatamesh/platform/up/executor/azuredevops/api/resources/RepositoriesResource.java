@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.up.executor.azuredevops.resources.azure;
+package org.opendatamesh.platform.up.executor.azuredevops.api.resources;
 
 import lombok.Data;
 

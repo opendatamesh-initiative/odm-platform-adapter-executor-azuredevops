@@ -1,8 +1,7 @@
-package org.opendatamesh.platform.up.executor.azuredevops.resources.azure;
+package org.opendatamesh.platform.up.executor.azuredevops.api.resources;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-import org.opendatamesh.platform.up.executor.azuredevops.resources.azure.ResourcesResource;
 
 import java.util.List;
 import java.util.Map;

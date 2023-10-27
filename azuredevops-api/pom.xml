@@ -3,7 +3,6 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>org.opendatamesh</groupId>
         <artifactId>odm-platform-up-services-executor-azuredevops</artifactId>
@@ -12,10 +11,10 @@
     </parent>
 
     <groupId>org.opendatamesh</groupId>
-    <artifactId>odm-platform-up-services-executor-azuredevops-server</artifactId>
+    <artifactId>odm-platform-up-services-executor-azuredevops-api</artifactId>
     <version>1.0.0</version>
-    <name>Azure DevOps executor server</name>
-    <description>Implementation of executor server for Azure DevOps</description>
+    <name>Azure DevOps executor API</name>
+    <description>Implementation of executor API for Azure DevOps</description>
     <properties>
         <java.version>11</java.version>
     </properties>
@@ -76,16 +75,19 @@
 
         <dependency>
             <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-platform-up-services-executor-azuredevops-api</artifactId>
+            <artifactId>odm-platform-core-commons</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
+
+
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -111,5 +113,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
