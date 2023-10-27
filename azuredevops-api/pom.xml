@@ -15,9 +15,6 @@
     <version>1.0.0</version>
     <name>Azure DevOps executor API</name>
     <description>Implementation of executor API for Azure DevOps</description>
-    <properties>
-        <java.version>11</java.version>
-    </properties>
 
     <licenses>
         <license>
@@ -90,6 +87,7 @@
 
     <build>
         <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -103,6 +101,12 @@
                             <artifactId>lombok</artifactId>
                             <version>1.18.24</version>
                         </path>
+                        <!-- This is needed when using Lombok 1.18.16 and above -->
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>0.2.0</version>
+                        </path>
                         <path>
                             <groupId>org.mapstruct</groupId>
                             <artifactId>mapstruct-processor</artifactId>
@@ -111,6 +115,19 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.3.3.RELEASE</version>
+                <configuration>
+                    <classifier>exec</classifier>
+                    <wait>1000</wait>
+                    <maxAttempts>180</maxAttempts>
+                    <mainClass>${executor.azuredevops.mainclass}</mainClass>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 </project>
