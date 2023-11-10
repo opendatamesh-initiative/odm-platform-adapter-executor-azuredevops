@@ -1,0 +1,41 @@
+trigger: none
+
+variables:
+  - group: ODM-Platform
+
+stages:
+  - stage: build
+    jobs:
+      - job: run_build
+        pool:
+          vmImage: 'ubuntu-latest' # other options: 'macOS-latest', 'windows-latest'
+        steps:
+          # Build
+          - task: Maven@3
+            inputs:
+              mavenPomFile: 'pom.xml'
+              options: '--settings settings.xml -DGITHUB_USERNAME=$(GITHUB_USERNAME) -DGITHUB_PASSWORD=$(GITHUB_PASSWORD) -DskipTests'
+              #javaHomeOption: 'JDKVersion'
+              jdkVersionOption: '17'
+              #jdkArchitectureOption: 'x64'
+              #publishJUnitResults: true
+              #testResultsFiles: '**/TEST-*.xml'
+              goals: 'package spring-boot:repackage'
+
+          # Deploy
+          ## Copy files or build artifacts to a remote machine over SSH
+          - task: CopyFilesOverSSH@0
+            inputs:
+              sshEndpoint: "odm-platform"
+              sourceFolder: './azuredevops-server/target' # Optional
+              contents: 'odm-platform-up-services-executor-azuredevops-server-1.0.0.jar'
+              targetFolder: "/home/odm" # Optional
+              overwrite: true # Optional
+
+          ## Run shell commands or a script on a remote machine using SSH
+          - task: SSH@0
+            inputs:
+              sshEndpoint: "odm-platform"
+              runOptions: 'script' # Options: commands, script, inline
+              scriptPath: "deployScript.sh" # Required when runOptions == Script
+              args: "$(AZURE_ODM_APP_CLIENT_ID) $(AZURE_ODM_APP_CLIENT_SECRET) $(AZURE_TENANT_ID)"

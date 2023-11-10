@@ -36,6 +36,13 @@
         </developer>
     </developers>
 
+    <repositories>
+        <repository>
+            <id>github2</id>
+            <url>https://maven.pkg.github.com/opendatamesh-initiative/odm-platform</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <!-- Spring Framework-->
         <dependency>
