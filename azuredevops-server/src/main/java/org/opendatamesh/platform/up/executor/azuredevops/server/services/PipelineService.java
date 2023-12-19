@@ -1,7 +1,11 @@
 package org.opendatamesh.platform.up.executor.azuredevops.server.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
+import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.up.executor.api.resources.ExecutorApiStandardErrors;
 import org.opendatamesh.platform.up.executor.azuredevops.api.clients.AzureDevOpsClient;
 import org.opendatamesh.platform.up.executor.azuredevops.api.resources.PipelineResource;
@@ -13,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service
 public class PipelineService {
@@ -26,6 +32,8 @@ public class PipelineService {
     private static final Logger logger = LoggerFactory.getLogger(PipelineService.class);
 
     public String runPipeline(ConfigurationsResource configurationsResource, TemplateResource templateResource, String callbackRef) {
+
+        configurationsResource = addParamsFromContext(configurationsResource);
 
         PipelineResource pipelineResource = pipelineMapper.toAzurePipelineResource(configurationsResource,templateResource, callbackRef);
 
@@ -54,4 +62,51 @@ public class PipelineService {
         }
 
     }
+
+    private ConfigurationsResource addParamsFromContext(ConfigurationsResource configurationsResource) {
+        if(configurationsResource.getContext() != null && configurationsResource.getParams() != null) {
+            String context = configurationsResource.getContext()
+                    .replace("\\\"", "\"")
+                    .replace("\"{", "{")
+                    .replace("}\"", "}");
+            ObjectNode jsonContext = null;
+            try {
+                jsonContext = ObjectMapperFactory.JSON_MAPPER.readValue(context, ObjectNode.class);
+            } catch (JsonProcessingException e) {
+                logger.warn("Impossible to deserialize context from ConfigurationsResource to add parameters from it. ", e);
+            }
+            if(jsonContext != null) {
+                Map<String, String> params = configurationsResource.getParams();
+                String paramVal;
+                for (String param : params.keySet()) {
+                    paramVal = params.get(param);
+                    if(paramVal.startsWith("${")) {
+                        String[] paramTree = paramVal
+                                .replace("${","")
+                                .replace("}","")
+                                .split("\\.");
+                        JsonNode subContext = jsonContext.deepCopy();
+                        Boolean paramFoundFlag = true;
+                        for(String node : paramTree) {
+                            try {
+                                subContext = subContext.get(node);
+                            } catch (Exception e) {
+                                logger.warn("Impossible to extract parameter from context. Skipped. ", e);
+                                paramFoundFlag = false;
+                                break;
+                            }
+                        }
+                        String paramNewVal = subContext != null ? subContext.toString() : null;
+                        if(paramFoundFlag) {
+                            params.put(param, paramNewVal);
+                        }
+                        configurationsResource.setParams(params);
+                    }
+                }
+            }
+        }
+        configurationsResource.setContext(null);
+        return configurationsResource;
+    }
+
 }
