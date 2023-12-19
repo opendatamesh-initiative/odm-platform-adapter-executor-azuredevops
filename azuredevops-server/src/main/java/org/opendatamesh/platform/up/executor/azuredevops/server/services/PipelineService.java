@@ -1,6 +1,5 @@
 package org.opendatamesh.platform.up.executor.azuredevops.server.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;

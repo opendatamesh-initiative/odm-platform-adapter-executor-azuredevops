@@ -2,9 +2,7 @@ package org.opendatamesh.platform.up.executor.azuredevops.server.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
 import org.opendatamesh.platform.up.executor.api.controllers.AbstractExecutorController;
 import org.opendatamesh.platform.up.executor.api.resources.ExecutorApiStandardErrors;
