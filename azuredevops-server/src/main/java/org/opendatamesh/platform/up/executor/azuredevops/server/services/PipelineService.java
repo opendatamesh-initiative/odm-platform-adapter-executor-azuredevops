@@ -65,16 +65,8 @@ public class PipelineService {
 
     private ConfigurationsResource addParamsFromContext(ConfigurationsResource configurationsResource) {
         if(configurationsResource.getContext() != null && configurationsResource.getParams() != null) {
-            String context = configurationsResource.getContext()
-                    .replace("\\\"", "\"")
-                    .replace("\"{", "{")
-                    .replace("}\"", "}");
-            ObjectNode jsonContext = null;
-            try {
-                jsonContext = ObjectMapperFactory.JSON_MAPPER.readValue(context, ObjectNode.class);
-            } catch (JsonProcessingException e) {
-                logger.warn("Impossible to deserialize context from ConfigurationsResource to add parameters from it. ", e);
-            }
+            Map<String, Object> context = configurationsResource.getContext();
+            ObjectNode jsonContext = ObjectMapperFactory.JSON_MAPPER.valueToTree(context);
             if(jsonContext != null) {
                 Map<String, String> params = configurationsResource.getParams();
                 String paramVal;

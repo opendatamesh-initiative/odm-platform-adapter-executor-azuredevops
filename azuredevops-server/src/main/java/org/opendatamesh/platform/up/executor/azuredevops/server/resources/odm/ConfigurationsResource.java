@@ -18,6 +18,6 @@ public class ConfigurationsResource {
     private Map<String, String> params;
 
     @JsonProperty("context")
-    private String context;
+    private Map<String, Object> context;
 
 }
