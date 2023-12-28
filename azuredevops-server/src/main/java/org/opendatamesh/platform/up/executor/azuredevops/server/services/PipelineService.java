@@ -67,37 +67,48 @@ public class PipelineService {
             Map<String, Object> context = configurationsResource.getContext();
             ObjectNode jsonContext = ObjectMapperFactory.JSON_MAPPER.valueToTree(context);
             if(jsonContext != null) {
-                Map<String, String> params = configurationsResource.getParams();
-                String paramVal;
-                for (String param : params.keySet()) {
-                    paramVal = params.get(param);
-                    if(paramVal.startsWith("${")) {
-                        String[] paramTree = paramVal
-                                .replace("${","")
-                                .replace("}","")
-                                .split("\\.");
-                        JsonNode subContext = jsonContext.deepCopy();
-                        Boolean paramFoundFlag = true;
-                        for(String node : paramTree) {
-                            try {
-                                subContext = subContext.get(node);
-                            } catch (Exception e) {
-                                logger.warn("Impossible to extract parameter from context. Skipped. ", e);
-                                paramFoundFlag = false;
-                                break;
-                            }
-                        }
-                        String paramNewVal = subContext != null ? subContext.toString() : null;
-                        if(paramFoundFlag) {
-                            params.put(param, paramNewVal);
-                        }
-                        configurationsResource.setParams(params);
-                    }
-                }
+                Map<String, String> params = extractParamsFromContext(configurationsResource.getParams(), jsonContext);
+                configurationsResource.setParams(params);
             }
         }
         configurationsResource.setContext(null);
         return configurationsResource;
+    }
+
+
+    // == UTILS ========================================================================================================
+
+    private Map<String, String> extractParamsFromContext(Map<String, String> params, ObjectNode jsonContext) {
+        String paramVal;
+        for (String param : params.keySet()) {
+            paramVal = params.get(param);
+            if(paramVal.startsWith("${")) {
+                String[] paramTree = paramNameToParamTree(paramVal);
+                JsonNode subContext = jsonContext.deepCopy();
+                Boolean paramFoundFlag = true;
+                for(String node : paramTree) {
+                    try {
+                        subContext = subContext.get(node);
+                    } catch (Exception e) {
+                        logger.warn("Impossible to extract parameter from context. Skipped. ", e);
+                        paramFoundFlag = false;
+                        break;
+                    }
+                }
+                String paramNewVal = subContext != null ? subContext.toString() : null;
+                if(paramFoundFlag) {
+                    params.put(param, paramNewVal);
+                }
+            }
+        }
+        return params;
+    }
+
+    private String[] paramNameToParamTree(String parameterName) {
+        return parameterName
+                .replace("${","")
+                .replace("}","")
+                .split("\\.");
     }
 
 }
