@@ -30,11 +30,15 @@ public class PipelineService {
 
     private static final Logger logger = LoggerFactory.getLogger(PipelineService.class);
 
-    public String runPipeline(ConfigurationsResource configurationsResource, TemplateResource templateResource, String callbackRef) {
+    public String runPipeline(
+            ConfigurationsResource configurationsResource, TemplateResource templateResource, String callbackRef
+    ) {
 
         configurationsResource = addParamsFromContext(configurationsResource);
 
-        PipelineResource pipelineResource = pipelineMapper.toAzurePipelineResource(configurationsResource,templateResource, callbackRef);
+        PipelineResource pipelineResource = pipelineMapper.toAzurePipelineResource(
+                configurationsResource, templateResource, callbackRef
+        );
 
         if(
                 templateResource.getOrganization() == null ||
@@ -48,7 +52,12 @@ public class PipelineService {
 
         logger.info("Calling AzureDevOps to run the pipeline ...");
 
-        ResponseEntity<String> azureRespone = azureDevOpsClient.runPipeline(pipelineResource, templateResource.getOrganization(), templateResource.getProject(), templateResource.getPipelineId());
+        ResponseEntity<String> azureRespone = azureDevOpsClient.runPipeline(
+                pipelineResource,
+                templateResource.getOrganization(),
+                templateResource.getProject(),
+                templateResource.getPipelineId()
+        );
         String azureResponseBody = azureRespone.getBody();
 
         if(!azureRespone.getStatusCode().is2xxSuccessful()){
