@@ -1,10 +1,17 @@
 package org.opendatamesh.platform.up.executor.azuredevops.server.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.MapType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
 import org.opendatamesh.platform.up.executor.api.resources.ExecutorApiStandardErrors;
+import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
 import org.opendatamesh.platform.up.executor.azuredevops.api.clients.AzureDevOpsClient;
 import org.opendatamesh.platform.up.executor.azuredevops.api.resources.PipelineResource;
+import org.opendatamesh.platform.up.executor.azuredevops.server.database.entities.PipelineRun;
+import org.opendatamesh.platform.up.executor.azuredevops.server.database.repositories.PipelineRunRepository;
 import org.opendatamesh.platform.up.executor.azuredevops.server.mappers.PipelineMapper;
 import org.opendatamesh.platform.up.executor.azuredevops.server.resources.odm.ConfigurationsResource;
 import org.opendatamesh.platform.up.executor.azuredevops.server.resources.odm.TemplateResource;
@@ -14,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -27,6 +35,10 @@ public class PipelineService {
 
     @Autowired
     protected ParameterService parameterService;
+
+    @Autowired
+    protected PipelineRunRepository pipelineRunRepository;
+    ObjectMapper mapper = new ObjectMapper();
 
     private static final Logger logger = LoggerFactory.getLogger(PipelineService.class);
 
@@ -53,21 +65,36 @@ public class PipelineService {
 
         logger.info("Calling AzureDevOps to run the pipeline ...");
 
-        ResponseEntity<String> azureRespone = azureDevOpsClient.runPipeline(
+
+
+        ResponseEntity<String> azureResponse = azureDevOpsClient.runPipeline(
                 pipelineResource,
                 templateResource.getOrganization(),
                 templateResource.getProject(),
                 templateResource.getPipelineId()
         );
-        String azureResponseBody = azureRespone.getBody();
+        String azureResponseBody = azureResponse.getBody();
 
-        if(!azureRespone.getStatusCode().is2xxSuccessful()){
+        if(!azureResponse.getStatusCode().is2xxSuccessful()){
             throw new InternalServerException(
                     ExecutorApiStandardErrors.SC502_50_REGISTRY_SERVICE_ERROR,
                     "Azure DevOps responded with an internal server error: " + azureResponseBody
             );
         } else {
-            logger.info("Pipeline run ended successfully");
+            logger.info("Pipeline run posted successfully");
+
+            TypeFactory factory = TypeFactory.defaultInstance();
+            MapType type = factory.constructMapType(HashMap.class, String.class, String.class);
+            Map<String, String> azurePipelineRun = null;
+            try {
+                azurePipelineRun = mapper.readValue(azureResponseBody, type);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+
+            PipelineRun pipelineRun = new PipelineRun(azurePipelineRun.get("id"), TaskStatus.PROCESSING);
+            pipelineRunRepository.saveAndFlush(pipelineRun);
+
             return azureResponseBody;
         }
 

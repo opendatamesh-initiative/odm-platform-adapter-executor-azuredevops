@@ -1,6 +1,7 @@
 package org.opendatamesh.platform.up.executor.azuredevops.server.database.entities;
 
 import lombok.Data;
+import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
 
 import java.util.Date;
 
@@ -18,14 +19,18 @@ public class PipelineRun {
     protected String runId;
 
     @Column(name="STATUS")
-    protected String status;
-
+    protected TaskStatus status;
 
     @Column(name="CREATED_AT")
     protected Date createdAt;
 
     @Column(name="UPDATED_AT")
     protected Date updatedAt;
+
+    public PipelineRun(String runId, TaskStatus status){
+        this.runId = runId;
+        this.status = status;
+    }
 
     @PrePersist
     protected void onCreate() {
