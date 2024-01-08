@@ -56,4 +56,8 @@ public class PipelineController extends AbstractExecutorController {
         throw new UnsupportedOperationException("Unimplemented method 'readTask'");
     }
 
+    public TaskResource getPipelineRunStatus(TaskResource task) {
+        throw new UnsupportedOperationException("Unimplemented method 'readTask'");
+    }
+
 }

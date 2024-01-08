@@ -6,10 +6,7 @@ import org.opendatamesh.platform.up.executor.azuredevops.api.components.OAuthTok
 import org.opendatamesh.platform.up.executor.azuredevops.api.resources.PipelineResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,6 +23,11 @@ public class AzureDevOpsClient extends ODMClient {
         return String.format(pipelineUri, organization, project, pipelineId);
     }
 
+    private String buildGetAzureRunUri(String organization, String project, String pipelineId, String runId) {
+        String pipelineUri = "/%s/%s/_apis/pipelines/%s/runs/%s?api-version=7.0";
+        return String.format(pipelineUri, organization, project, pipelineId, runId);
+    }
+
     public ResponseEntity<String> runPipeline(PipelineResource pipelineResource, String organization, String project, String pipelineId){
 
         HttpHeaders headers = new HttpHeaders();
@@ -36,6 +38,22 @@ public class AzureDevOpsClient extends ODMClient {
         HttpEntity<PipelineResource> entity = new HttpEntity<>(pipelineResource, headers);
 
         ResponseEntity<String> response = rest.postForEntity(apiUrlFromString(pipelineUri), entity, String.class);
+
+        return response;
+
+    }
+
+    public ResponseEntity<String> getAzureRun(String organization, String project, String pipelineId, String runId){
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(oAuthTokenManager.getToken());
+
+        String pipelineUri = buildGetAzureRunUri(organization, project, pipelineId, runId);
+        HttpEntity<PipelineResource> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response = rest.exchange(apiUrlFromString(pipelineUri), HttpMethod.GET, entity, String.class);
+
 
         return response;
 

@@ -5,12 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.MapType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
 import org.opendatamesh.platform.up.executor.api.resources.ExecutorApiStandardErrors;
 import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
 import org.opendatamesh.platform.up.executor.azuredevops.api.clients.AzureDevOpsClient;
 import org.opendatamesh.platform.up.executor.azuredevops.api.resources.PipelineResource;
+import org.opendatamesh.platform.up.executor.azuredevops.api.resources.PipelineRunResource;
 import org.opendatamesh.platform.up.executor.azuredevops.server.database.entities.PipelineRun;
+import org.opendatamesh.platform.up.executor.azuredevops.server.database.mappers.PipelineRunMapper;
 import org.opendatamesh.platform.up.executor.azuredevops.server.database.repositories.PipelineRunRepository;
 import org.opendatamesh.platform.up.executor.azuredevops.server.mappers.PipelineMapper;
 import org.opendatamesh.platform.up.executor.azuredevops.server.resources.odm.ConfigurationsResource;
@@ -23,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class PipelineService {
@@ -35,6 +39,9 @@ public class PipelineService {
 
     @Autowired
     protected ParameterService parameterService;
+
+    @Autowired
+    protected PipelineRunMapper pipelineRunMapper;
 
     @Autowired
     protected PipelineRunRepository pipelineRunRepository;
@@ -76,6 +83,8 @@ public class PipelineService {
         String azureResponseBody = azureResponse.getBody();
 
         if(!azureResponse.getStatusCode().is2xxSuccessful()){
+            PipelineRun pipelineRun = new PipelineRun(TaskStatus.FAILED);
+            pipelineRunRepository.saveAndFlush(pipelineRun);
             throw new InternalServerException(
                     ExecutorApiStandardErrors.SC502_50_REGISTRY_SERVICE_ERROR,
                     "Azure DevOps responded with an internal server error: " + azureResponseBody
@@ -92,7 +101,7 @@ public class PipelineService {
                 throw new RuntimeException(e);
             }
 
-            PipelineRun pipelineRun = new PipelineRun(azurePipelineRun.get("id"), TaskStatus.PROCESSING);
+            PipelineRun pipelineRun = new PipelineRun(Long.getLong(azurePipelineRun.get("id")), TaskStatus.PROCESSING);
             pipelineRunRepository.saveAndFlush(pipelineRun);
 
             return azureResponseBody;
@@ -113,6 +122,20 @@ public class PipelineService {
         configurationsResource.setContext(null);
 
         return configurationsResource;
+    }
+
+    private PipelineRunResource getPipelineRunStatus(String runId) {
+
+
+        Optional<PipelineRun> pipelineRun = pipelineRunRepository.findById(runId);
+        if(pipelineRun.isEmpty()){
+            throw new NotFoundException(
+                    ExecutorApiStandardErrors.SC404_01_PIPELINE_RUN_NOT_FOUND,
+                    "Pipeline run with id [" + runId + "] does not exist");
+        }
+
+        PipelineRunResource pipelineRunResource = pipelineRunMapper.toResource(pipelineRun.get());
+        return pipelineRunResource;
     }
 
 }

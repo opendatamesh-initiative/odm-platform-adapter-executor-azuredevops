@@ -9,16 +9,27 @@ import javax.persistence.*;
 
 @Data
 @Entity(name = "PipelineRun")
-@Table(name = "PIPELINES_RUNS", schema="ODMEXECUTOR")
+@Table(name = "PIPELINE_RUNS", schema="ODMEXECUTOR")
 public class PipelineRun {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="TASKID")
-    Long taskId;
+    protected Long taskId;
 
     @Column(name="RUNID")
-    protected String runId;
+    protected Long runId;
+
+    @Column(name="ORGANIZATION")
+    protected Long organization;
+
+    @Column(name="PROJECT")
+    protected Long project;
+
+    @Column(name="PIPELINEID")
+    protected Long pipelineId;
 
     @Column(name="STATUS")
+    @Enumerated(EnumType.STRING)
     protected TaskStatus status;
 
     @Column(name="CREATED_AT")
@@ -27,10 +38,18 @@ public class PipelineRun {
     @Column(name="UPDATED_AT")
     protected Date updatedAt;
 
-    public PipelineRun(String runId, TaskStatus status){
+
+
+    public PipelineRun(Long runId, TaskStatus status){
         this.runId = runId;
         this.status = status;
     }
+
+    public PipelineRun(TaskStatus status){
+        this.status = status;
+    }
+
+    public PipelineRun(){}
 
     @PrePersist
     protected void onCreate() {
