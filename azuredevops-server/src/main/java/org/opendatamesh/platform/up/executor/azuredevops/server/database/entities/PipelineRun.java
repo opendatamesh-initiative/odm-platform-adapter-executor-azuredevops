@@ -2,6 +2,7 @@ package org.opendatamesh.platform.up.executor.azuredevops.server.database.entiti
 
 import lombok.Data;
 import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
+import org.springframework.data.convert.ThreeTenBackPortConverters;
 
 import java.util.Date;
 
@@ -20,13 +21,13 @@ public class PipelineRun {
     protected Long runId;
 
     @Column(name="ORGANIZATION")
-    protected Long organization;
+    protected String organization;
 
     @Column(name="PROJECT")
-    protected Long project;
+    protected String project;
 
     @Column(name="PIPELINEID")
-    protected Long pipelineId;
+    protected String pipelineId;
 
     @Column(name="STATUS")
     @Enumerated(EnumType.STRING)
@@ -38,11 +39,37 @@ public class PipelineRun {
     @Column(name="UPDATED_AT")
     protected Date updatedAt;
 
-
+    public PipelineRun(Long runId, String organization, String project, String pipelineId, TaskStatus status) {
+        this.runId = runId;
+        this.organization = organization;
+        this.project = project;
+        this.pipelineId = pipelineId;
+        this.status = status;
+    }
 
     public PipelineRun(Long runId, TaskStatus status){
         this.runId = runId;
         this.status = status;
+    }
+
+    public void saveStatusFromAzureState(String state){
+        switch (state) {
+            case "canceling":
+                setStatus(TaskStatus.ABORTED);
+                break;
+            case "completed":
+                setStatus(TaskStatus.PROCESSED);
+                break;
+            case "inProgress":
+                setStatus(TaskStatus.PROCESSING);
+                break;
+            case "unknown":
+                setStatus(TaskStatus.FAILED);
+                break;
+            default:
+                setStatus(TaskStatus.FAILED);
+                break;
+        }
     }
 
     public PipelineRun(TaskStatus status){

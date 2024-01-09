@@ -7,6 +7,7 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEn
 import org.opendatamesh.platform.up.executor.api.controllers.AbstractExecutorController;
 import org.opendatamesh.platform.up.executor.api.resources.ExecutorApiStandardErrors;
 import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
+import org.opendatamesh.platform.up.executor.azuredevops.api.resources.PipelineRunResource;
 import org.opendatamesh.platform.up.executor.azuredevops.server.resources.odm.ConfigurationsResource;
 import org.opendatamesh.platform.up.executor.azuredevops.server.resources.odm.TemplateResource;
 import org.opendatamesh.platform.up.executor.azuredevops.server.services.PipelineService;
@@ -56,8 +57,8 @@ public class PipelineController extends AbstractExecutorController {
         throw new UnsupportedOperationException("Unimplemented method 'readTask'");
     }
 
-    public TaskResource getPipelineRunStatus(TaskResource task) {
-        throw new UnsupportedOperationException("Unimplemented method 'readTask'");
+    public PipelineRunResource getPipelineRunStatus(String taskId) {
+        return pipelineService.getPipelineRunStatus(taskId);
     }
 
 }

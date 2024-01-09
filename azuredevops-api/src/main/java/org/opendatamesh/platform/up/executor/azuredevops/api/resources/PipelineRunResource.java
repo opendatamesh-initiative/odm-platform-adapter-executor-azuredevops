@@ -15,14 +15,26 @@ public class PipelineRunResource {
 
     @JsonProperty("taskId")
     @Schema(description = "Auto generated Task ID")
-    private String taskId;
+    private Long taskId;
 
     @JsonProperty("runId")
     @Schema(description = "Id from Azure Dev Ops run", required = true)
-    private String runId;
+    private Long runId;
 
     @JsonProperty("status")
     @Schema(description = "Pipeline run status", required = true)
     private TaskStatus status;
+
+    @JsonProperty("organization")
+    @Schema(description = "Organization name", required = true)
+    private String organization;
+
+    @JsonProperty("project")
+    @Schema(description = "Project name", required = true)
+    private String project;
+
+    @JsonProperty("pipelineId")
+    @Schema(description = "Pipeline ID", required = true)
+    private String pipelineId;
 
 }

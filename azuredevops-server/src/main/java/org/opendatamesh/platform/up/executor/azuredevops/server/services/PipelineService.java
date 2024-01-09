@@ -73,7 +73,6 @@ public class PipelineService {
         logger.info("Calling AzureDevOps to run the pipeline ...");
 
 
-
         ResponseEntity<String> azureResponse = azureDevOpsClient.runPipeline(
                 pipelineResource,
                 templateResource.getOrganization(),
@@ -83,7 +82,7 @@ public class PipelineService {
         String azureResponseBody = azureResponse.getBody();
 
         if(!azureResponse.getStatusCode().is2xxSuccessful()){
-            PipelineRun pipelineRun = new PipelineRun(TaskStatus.FAILED);
+            PipelineRun pipelineRun = new PipelineRun(TaskStatus.FAILED); //TODO salvo anche se ha fallito?
             pipelineRunRepository.saveAndFlush(pipelineRun);
             throw new InternalServerException(
                     ExecutorApiStandardErrors.SC502_50_REGISTRY_SERVICE_ERROR,
@@ -91,17 +90,12 @@ public class PipelineService {
             );
         } else {
             logger.info("Pipeline run posted successfully");
+            Map<String, String> azurePipelineRun = stringToMap(azureResponseBody);
 
-            TypeFactory factory = TypeFactory.defaultInstance();
-            MapType type = factory.constructMapType(HashMap.class, String.class, String.class);
-            Map<String, String> azurePipelineRun = null;
-            try {
-                azurePipelineRun = mapper.readValue(azureResponseBody, type);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
+            logger.info("Run status: " + azurePipelineRun.get("state"));
 
-            PipelineRun pipelineRun = new PipelineRun(Long.getLong(azurePipelineRun.get("id")), TaskStatus.PROCESSING);
+            PipelineRun pipelineRun = new PipelineRun(Long.getLong(azurePipelineRun.get("id")),
+                    templateResource.getOrganization(), templateResource.getProject(), templateResource.getPipelineId(), null);
             pipelineRunRepository.saveAndFlush(pipelineRun);
 
             return azureResponseBody;
@@ -124,18 +118,38 @@ public class PipelineService {
         return configurationsResource;
     }
 
-    private PipelineRunResource getPipelineRunStatus(String runId) {
-
-
-        Optional<PipelineRun> pipelineRun = pipelineRunRepository.findById(runId);
-        if(pipelineRun.isEmpty()){
+    public PipelineRunResource getPipelineRunStatus(String runId) {
+        Optional<PipelineRun> pipelineRunOptional = pipelineRunRepository.findById(runId);
+        if(pipelineRunOptional.isEmpty()){
             throw new NotFoundException(
                     ExecutorApiStandardErrors.SC404_01_PIPELINE_RUN_NOT_FOUND,
                     "Pipeline run with id [" + runId + "] does not exist");
         }
 
-        PipelineRunResource pipelineRunResource = pipelineRunMapper.toResource(pipelineRun.get());
+        PipelineRun pipelineRun = pipelineRunOptional.get();
+
+        ResponseEntity<String>  azureRunResponse = azureDevOpsClient.getAzureRun(pipelineRun.getOrganization(), pipelineRun.getProject(),
+                pipelineRun.getPipelineId(), runId);
+
+        Map<String, String> azurePipelineRun = stringToMap(azureRunResponse.getBody());
+        pipelineRun.saveStatusFromAzureState(azurePipelineRun.get("state"));
+        pipelineRun = pipelineRunRepository.saveAndFlush(pipelineRun);
+
+
+        PipelineRunResource pipelineRunResource = pipelineRunMapper.toResource(pipelineRun);
         return pipelineRunResource;
+    }
+
+    private Map<String, String> stringToMap(String toConvert){
+        TypeFactory factory = TypeFactory.defaultInstance();
+        MapType type = factory.constructMapType(HashMap.class, String.class, String.class);
+        Map<String, String> azurePipelineRun = null;
+        try {
+            azurePipelineRun = mapper.readValue(toConvert, type);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return azurePipelineRun;
     }
 
 }
