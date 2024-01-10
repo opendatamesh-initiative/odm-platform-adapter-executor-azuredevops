@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AzureDevOpsClient extends ODMClient {
+
     private OAuthTokenManager oAuthTokenManager;
 
     public AzureDevOpsClient(
@@ -36,8 +37,10 @@ public class AzureDevOpsClient extends ODMClient {
     }
 
     private String buildRunPipelineUri(String organization, String project, String pipelineId) {
+
         String pipelineUri = "/%s/%s/_apis/pipelines/%s/runs?api-version=7.0";
         return String.format(pipelineUri, organization, project, pipelineId);
+
     }
 
     public ResponseEntity<String> runPipeline(
