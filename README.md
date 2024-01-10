@@ -110,7 +110,7 @@ java -jar azuredevops-server/target/odm-platform-up-services-executor-azuredevop
 ```
 
 ## Run with Docker
-*_Dependencies must have been compiled to run this project._
+*_Dependencies must have been compiled to run this project_
 
 ### Clone repository
 Clone the repository and move it to the project root folder
