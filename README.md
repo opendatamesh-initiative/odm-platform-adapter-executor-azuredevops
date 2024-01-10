@@ -99,14 +99,14 @@ mvn clean package spring-boot:repackage -DskipTests
 Run the application:
 
 ```bash
-java -jar azuredevops-server/target/odm-platform-up-services-executor-azuredevops-0.0.1-SNAPSHOT.jar
+java -jar azuredevops-server/target/odm-platform-up-services-executor-azuredevops-server-1.0.0.jar
 ```
 
 ### Stop application
 To stop the application type CTRL+C or just close the shell. To start it again re-execute the following command:
 
 ```bash
-java -jar azuredevops-server/target/odm-platform-up-services-executor-azuredevops-0.0.1-SNAPSHOT.jar
+java -jar azuredevops-server/target/odm-platform-up-services-executor-azuredevops-server-1.0.0.jar
 ```
 
 ## Run with Docker
