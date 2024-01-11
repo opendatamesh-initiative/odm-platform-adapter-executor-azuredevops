@@ -116,7 +116,7 @@ java -jar azuredevops-server/target/odm-platform-up-services-executor-azuredevop
 Clone the repository and move it to the project root folder
 
 ```bash
-git git clone https://github.com/opendatamesh-initiative/odm-platform-up-services-executor-azuredevops.git
+git clone https://github.com/opendatamesh-initiative/odm-platform-up-services-executor-azuredevops.git
 cd odm-platform-up-services-executor-azuredevops
 ```
 
