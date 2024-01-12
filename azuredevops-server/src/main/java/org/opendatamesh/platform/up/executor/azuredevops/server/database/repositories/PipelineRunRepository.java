@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 
-public interface PipelineRunRepository extends JpaRepository<PipelineRun, String>, JpaSpecificationExecutor<PipelineRun> {
+public interface PipelineRunRepository extends JpaRepository<PipelineRun, Long>, JpaSpecificationExecutor<PipelineRun> {
 
 }

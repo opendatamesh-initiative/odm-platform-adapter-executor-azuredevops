@@ -2,6 +2,7 @@ package org.opendatamesh.platform.up.executor.azuredevops.server.database.entiti
 
 import lombok.Data;
 import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
+import org.opendatamesh.platform.up.executor.azuredevops.api.resources.AzureRunState;
 import org.springframework.data.convert.ThreeTenBackPortConverters;
 
 import java.util.Date;
@@ -13,7 +14,6 @@ import javax.persistence.*;
 @Table(name = "PIPELINE_RUNS", schema="ODMEXECUTOR")
 public class PipelineRun {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="TASKID")
     protected Long taskId;
 
@@ -31,7 +31,7 @@ public class PipelineRun {
 
     @Column(name="STATUS")
     @Enumerated(EnumType.STRING)
-    protected TaskStatus status;
+    protected AzureRunState status;
 
     @Column(name="CREATED_AT")
     protected Date createdAt;
@@ -39,7 +39,7 @@ public class PipelineRun {
     @Column(name="UPDATED_AT")
     protected Date updatedAt;
 
-    public PipelineRun(Long runId, String organization, String project, String pipelineId, TaskStatus status) {
+    public PipelineRun(Long runId, String organization, String project, String pipelineId, AzureRunState status) {
         this.runId = runId;
         this.organization = organization;
         this.project = project;
@@ -47,34 +47,11 @@ public class PipelineRun {
         this.status = status;
     }
 
-    public PipelineRun(Long runId, TaskStatus status){
+    public PipelineRun(Long runId, AzureRunState status){
         this.runId = runId;
         this.status = status;
     }
 
-    public void saveStatusFromAzureState(String state){
-        switch (state) {
-            case "canceling":
-                setStatus(TaskStatus.ABORTED);
-                break;
-            case "completed":
-                setStatus(TaskStatus.PROCESSED);
-                break;
-            case "inProgress":
-                setStatus(TaskStatus.PROCESSING);
-                break;
-            case "unknown":
-                setStatus(TaskStatus.FAILED);
-                break;
-            default:
-                setStatus(TaskStatus.FAILED);
-                break;
-        }
-    }
-
-    public PipelineRun(TaskStatus status){
-        this.status = status;
-    }
 
     public PipelineRun(){}
 

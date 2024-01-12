@@ -3,6 +3,7 @@ package org.opendatamesh.platform.up.executor.azuredevops.api.clients;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.up.executor.azuredevops.api.components.OAuthTokenManager;
+import org.opendatamesh.platform.up.executor.azuredevops.api.resources.AzureRunResource;
 import org.opendatamesh.platform.up.executor.azuredevops.api.resources.PipelineResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,12 +24,12 @@ public class AzureDevOpsClient extends ODMClient {
         return String.format(pipelineUri, organization, project, pipelineId);
     }
 
-    private String buildGetAzureRunUri(String organization, String project, String pipelineId, String runId) {
+    private String buildGetAzureRunUri(String organization, String project, String pipelineId, Long runId) {
         String pipelineUri = "/%s/%s/_apis/pipelines/%s/runs/%s?api-version=7.0";
         return String.format(pipelineUri, organization, project, pipelineId, runId);
     }
 
-    public ResponseEntity<String> runPipeline(PipelineResource pipelineResource, String organization, String project, String pipelineId){
+    public ResponseEntity<AzureRunResource> runPipeline(PipelineResource pipelineResource, String organization, String project, String pipelineId){
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -37,13 +38,13 @@ public class AzureDevOpsClient extends ODMClient {
         String pipelineUri = buildRunPipelineUri(organization, project, pipelineId);
         HttpEntity<PipelineResource> entity = new HttpEntity<>(pipelineResource, headers);
 
-        ResponseEntity<String> response = rest.postForEntity(apiUrlFromString(pipelineUri), entity, String.class);
+        ResponseEntity<AzureRunResource> response = rest.postForEntity(apiUrlFromString(pipelineUri), entity, AzureRunResource.class);
 
         return response;
 
     }
 
-    public ResponseEntity<String> getAzureRun(String organization, String project, String pipelineId, String runId){
+    public ResponseEntity<String> getAzureRun(String organization, String project, String pipelineId, Long runId){
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
