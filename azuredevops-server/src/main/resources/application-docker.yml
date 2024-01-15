@@ -30,6 +30,8 @@ spring:
         provider:
           azure-devops:
             token-uri: https://login.microsoftonline.com/${AZURE_TENANT_ID}/oauth2/v2.0/token
+            basic-uri: https://dev.azure.com/
+  # Database
   jpa:
     hibernate:
       ddl-auto: validate
@@ -44,7 +46,6 @@ spring:
             non_contextual_creation: true
         globally_quoted_identifiers: true
         default_schema: ${DATABASE_SCHEMA}
-  # DB
   datasource:
     url: ${DATABASE_URL}?allowPublicKeyRetrieval=true&useSSL=false
     username: ${DATABASE_USERNAME}
