@@ -34,18 +34,6 @@ public class AzureDevOpsClient extends ODMClient {
         );
     }
 
-    private String buildRunPipelineUri(String organization, String project, String pipelineId) {
-
-        String pipelineUri = "/%s/%s/_apis/pipelines/%s/runs?api-version=7.0";
-        return String.format(pipelineUri, organization, project, pipelineId);
-
-    }
-
-    private String buildGetAzureRunUri(String organization, String project, String pipelineId, Long runId) {
-        String pipelineUri = "/%s/%s/_apis/pipelines/%s/runs/%s?api-version=7.0";
-        return String.format(pipelineUri, organization, project, pipelineId, runId);
-    }
-
     public ResponseEntity<AzureRunResource> runPipeline(
             PipelineResource pipelineResource, String organization, String project, String pipelineId
     ){
@@ -54,25 +42,39 @@ public class AzureDevOpsClient extends ODMClient {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(oAuthTokenManager.getToken());
 
-        String pipelineUri = buildRunPipelineUri(organization, project, pipelineId);
         HttpEntity<PipelineResource> entity = new HttpEntity<>(pipelineResource, headers);
 
-        ResponseEntity<AzureRunResource> response = rest.postForEntity(apiUrlFromString(pipelineUri), entity, AzureRunResource.class);
+        ResponseEntity<AzureRunResource> response = rest.postForEntity(
+                apiUrl(AzureDevOpsAPIRoutes.AZURE_DEVOPS_PIPELINE),
+                entity,
+                AzureRunResource.class,
+                organization,
+                project,
+                pipelineId
+        );
 
         return response;
 
     }
 
-    public ResponseEntity<String> getAzureRun(String organization, String project, String pipelineId, Long runId){
+    public ResponseEntity<AzureRunResource> getAzureRun(String organization, String project, String pipelineId, Long runId){
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(oAuthTokenManager.getToken());
 
-        String pipelineUri = buildGetAzureRunUri(organization, project, pipelineId, runId);
         HttpEntity<PipelineResource> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<String> response = rest.exchange(apiUrlFromString(pipelineUri), HttpMethod.GET, entity, String.class);
+        ResponseEntity<AzureRunResource> response = rest.exchange(
+                apiUrl(AzureDevOpsAPIRoutes.AZURE_DEVOPS_RUN),
+                HttpMethod.GET,
+                entity,
+                AzureRunResource.class,
+                organization,
+                project,
+                pipelineId,
+                runId
+        );
 
         return response;
 

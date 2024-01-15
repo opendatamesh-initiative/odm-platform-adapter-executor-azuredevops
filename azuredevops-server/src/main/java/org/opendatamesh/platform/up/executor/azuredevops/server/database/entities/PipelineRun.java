@@ -1,17 +1,18 @@
 package org.opendatamesh.platform.up.executor.azuredevops.server.database.entities;
 
 import lombok.Data;
-import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
+import org.opendatamesh.platform.core.dpds.utils.HashMapConverter;
+import org.opendatamesh.platform.up.executor.azuredevops.api.resources.AzureRunResult;
 import org.opendatamesh.platform.up.executor.azuredevops.api.resources.AzureRunState;
-import org.springframework.data.convert.ThreeTenBackPortConverters;
-
-import java.util.Date;
+import org.opendatamesh.platform.up.executor.azuredevops.api.resources.AzureVariable;
 
 import javax.persistence.*;
+import java.util.Date;
+import java.util.Map;
 
 @Data
 @Entity(name = "PipelineRun")
-@Table(name = "PIPELINE_RUNS", schema="ODMEXECUTOR")
+@Table(name = "PIPELINE_RUNS", schema = "ODMEXECUTOR")
 public class PipelineRun {
     @Id
     @Column(name="TASKID")
@@ -33,34 +34,18 @@ public class PipelineRun {
     @Enumerated(EnumType.STRING)
     protected AzureRunState status;
 
-    @Column(name="CREATED_AT")
-    protected Date createdAt;
+    @Column(name="RESULT")
+    @Enumerated(EnumType.STRING)
+    protected AzureRunResult result;
 
-    @Column(name="UPDATED_AT")
-    protected Date updatedAt;
+    @Column(name = "VARIABLES")
+    @Convert(converter = HashMapConverter.class)
+    protected Map<String, AzureVariable> variables;
 
-    public PipelineRun(Long runId, String organization, String project, String pipelineId, AzureRunState status) {
-        this.runId = runId;
-        this.organization = organization;
-        this.project = project;
-        this.pipelineId = pipelineId;
-        this.status = status;
-    }
+    @Column(name = "CREATED_AT")
+    protected String createdAt;
 
-    public PipelineRun(Long runId, AzureRunState status){
-        this.runId = runId;
-        this.status = status;
-    }
+    @Column(name = "FINISHED_AT")
+    protected String finishedAt;
 
-
-    public PipelineRun(){}
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = new Date();
-    }
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = new Date();
-    }
 }
