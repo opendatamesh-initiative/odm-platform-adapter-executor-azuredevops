@@ -9,22 +9,29 @@ import java.util.Map;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AzureRunResource {
+
     @JsonProperty("id")
-    Long runId;
+    private Long runId;
+
+    @JsonProperty("name")
+    private String name;
 
     @JsonProperty("state")
-    AzureRunState state;
+    private AzureRunState state;
 
     @JsonProperty("result")
-    AzureRunResult result;
+    private AzureRunResult result;
 
     @JsonProperty("variables")
-    Map<String, AzureVariable> variables;
+    private Map<String, AzureVariable> variables;
+
+    @JsonProperty("templateParameters")
+    private Map<String, String> templateParameters;
 
     @JsonProperty("createdDate")
-    String createdDate;
+    private String createdDate;
 
     @JsonProperty("finishedDate")
-    String finishedDate;
+    private String finishedDate;
 
 }

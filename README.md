@@ -129,13 +129,62 @@ You need to first execute the build locally by running the following command:
 mvn clean package spring-boot:repackage -DskipTests
 ```
 
+### Run database
+The image generated from Dockerfile contains only the application. It requires a database to run properly. The supported databases are MySql and Postgres. If you do not already have a database available, you can create one by running the following commands:
+
+**MySql**
+```bash
+docker run --name odm-executor-azuredevops-mysql-db -d -p 3306:3306  \
+   -e MYSQL_DATABASE=ODMEXECUTOR \
+   -e MYSQL_ROOT_PASSWORD=root \
+   mysql:8
+```
+
+**Postgres**
+```bash
+docker run --name odm-executor-azuredevops-postgres-db -d -p 5432:5432  \
+   -e POSTGRES_DB=odmpdb \
+   -e POSTGRES_USER=postgres \
+   -e POSTGRES_PASSWORD=postgres \
+   postgres:11-alpine
+```
+
+Check that the database has started correctly:
+
+**MySql**
+```bash
+docker logs odm-executor-azuredevops-mysql-db
+```
+
+*Postgres*
+```bash
+docker logs odm-executor-azuredevops-postgres-db
+```
+
 ### Build image
 Build the Docker image of the application and run it.
 
 *Before executing the following commands change properly the value of arguments.
 
+**MySql**
 ```bash
-docker build -t odm-executor-azuredevops-app . -f Dockerfile \
+docker build -t odm-executor-azuredevops-mysql-app . -f Dockerfile \
+   --build-arg DATABASE_URL=jdbc:mysql://localhost:3306/ODMEXECUTOR \
+   --build-arg DATABASE_USERNAME=root \
+   --build-arg DATABASE_PASSWORD=root \
+   --build-arg FLYWAY_SCRIPTS_DIR=mysql \
+   --build-arg AZURE_ODM_APP_CLIENT_ID=<azure-odm-app-client-id> \
+   --build-arg AZURE_ODM_APP_CLIENT_SECRET=<azure-odm-app-client-secret> \
+   --build-arg AZURE_TENANT_ID=<azure-tenant-id-value> 
+```
+
+**Postgres**
+```bash
+docker build -t odm-executor-azuredevops-postgres-app . -f Dockerfile \
+   --build-arg DATABASE_URL=jdbc:postgresql://localhost:5432/odmpdb \
+   --build-arg DATABASE_USERNAME=postgres \
+   --build-arg DATABASE_PASSWORD=postgres \
+   --build-arg FLYWAY_SCRIPTS_DIR=postgresql \
    --build-arg AZURE_ODM_APP_CLIENT_ID=<azure-odm-app-client-id> \
    --build-arg AZURE_ODM_APP_CLIENT_SECRET=<azure-odm-app-client-secret> \
    --build-arg AZURE_TENANT_ID=<azure-tenant-id-value> 
@@ -144,25 +193,37 @@ docker build -t odm-executor-azuredevops-app . -f Dockerfile \
 ### Run application
 Run the Docker image.
 
+*Note: Before executing the following commands remove the argument `--net host` if the database is not running on `localhost`*
+
+**MySql**
 ```bash
-docker run --name odm-executor-azuredevops-app -p 9003:9003 odm-executor-azuredevops-app
+docker run --name odm-executor-azuredevops-mysql-app -p 9003:9003 --net host odm-executor-azuredevops-mysql-app
+```
+
+**Postgres**
+```bash
+docker run ---name odm-executor-azuredevops-postgres-app -p 9003:9003 --net host odm-executor-azuredevops-postgres-app
 ```
 
 ### Stop application
 
+*Before executing the following commands:
+* change the DB name to `odm-executor-azuredevops-postgres-db` if you are using postgres and not mysql
+* change the instance name to `odm-executor-azuredevops-postgres-app` if you are using postgres and not mysql
+
 ```bash
-docker stop odm-executor-azuredevops-app
+docker stop odm-executor-azuredevops-mysql-app
 ```
 To restart a stopped application execute the following commands:
 
 ```bash
-docker start odm-executor-azuredevops-app
+docker start odm-executor-azuredevops-mysql-app
 ```
 
 To remove a stopped application to rebuild it from scratch execute the following commands :
 
 ```bash
-docker rm odm-executor-azuredevops-app
+docker rm odm-executor-azuredevops-mysql-app
 ```
 
 ## Run with Docker Compose
@@ -172,8 +233,8 @@ docker rm odm-executor-azuredevops-app
 Clone the repository and move it to the project root folder
 
 ```bash
-git git clone https://github.com/opendatamesh-initiative/odm-platform-up-services-policy-opa.git
-cd odm-platform-up-services-policy-opa
+git git clone https://github.com/opendatamesh-initiative/odm-platform-up-services-executor-azuredevops.git
+cd odm-platform-up-services-executor-azuredevops
 ```
 
 ### Compile project
@@ -192,6 +253,10 @@ SPRING_PORT=9003
 AZURE_ODM_APP_CLIENT_ID=<azure-odm-app-client>
 AZURE_ODM_APP_CLIENT_SECRET=<azure-odm-app-client-secret>
 AZURE_TENANT_ID=<azure-tenant-id-value>
+DATABASE_NAME=odmpdb
+DATABASE_PASSWORD=pwd
+DATABASE_USERNAME=usr
+DATABASE_PORT=5432
 ```
 
 Then, build the docker-compose file:
@@ -226,4 +291,12 @@ docker-compose build --no-cache
 ## REST services
 You can invoke REST endpoints through *OpenAPI UI* available at the following url:
 
-* [http://localhost:9003//api/v1/up/executor/azure-devops/swagger-ui/index.html](http://localhost:9003/api/v1/up/executor/azure-devops/swagger-ui/index.html)
+* [http://localhost:9003//api/v1/up/executor/swagger-ui/index.html](http://localhost:9003/api/v1/up/executor/swagger-ui/index.html)
+
+## Database
+
+If the application is running using an in memory instance of H2 database you can check the database content through H2 Web Console available at the following url:
+
+* [http://localhost:9003/api/v1/up/executor/h2-console](http://localhost:9003/api/v1/up/executor/h2-console)
+
+In all cases you can also use your favourite sql client providing the proper connection parameters

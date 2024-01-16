@@ -1,6 +1,5 @@
 package org.opendatamesh.platform.up.executor.azuredevops.server.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
@@ -8,7 +7,6 @@ import org.opendatamesh.platform.up.executor.api.resources.ExecutorApiStandardEr
 import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
 import org.opendatamesh.platform.up.executor.azuredevops.api.clients.AzureDevOpsClient;
 import org.opendatamesh.platform.up.executor.azuredevops.api.resources.AzureRunResource;
-import org.opendatamesh.platform.up.executor.azuredevops.api.resources.AzureRunState;
 import org.opendatamesh.platform.up.executor.azuredevops.api.resources.PipelineResource;
 import org.opendatamesh.platform.up.executor.azuredevops.api.resources.PipelineRunResource;
 import org.opendatamesh.platform.up.executor.azuredevops.server.database.entities.PipelineRun;
@@ -43,7 +41,6 @@ public class PipelineService {
 
     @Autowired
     protected PipelineRunRepository pipelineRunRepository;
-    ObjectMapper mapper = new ObjectMapper();
 
     private static final Logger logger = LoggerFactory.getLogger(PipelineService.class);
 
@@ -78,48 +75,55 @@ public class PipelineService {
         );
         AzureRunResource azureResponseBody = azureResponse.getBody();
 
-        try {
-            PipelineRun pipelineRun = new PipelineRun();
-            pipelineRun.setTaskId(taskId);
-            pipelineRun.setRunId(azureResponseBody.getRunId());
-            pipelineRun.setPipelineId(templateResource.getPipelineId());
-            pipelineRun.setOrganization(templateResource.getOrganization());
-            pipelineRun.setProject(templateResource.getProject());
-            pipelineRun.setResult(azureResponseBody.getResult());
-            pipelineRun.setVariables(azureResponseBody.getVariables());
-            pipelineRun.setCreatedAt(azureResponseBody.getCreatedDate());
-            pipelineRun.setStatus(azureResponseBody.getState());
-            pipelineRun.setFinishedAt(azureResponseBody.getFinishedDate());
-            pipelineRunRepository.saveAndFlush(pipelineRun);
-        } catch (Exception e) {
-            logger.error("Error creating PipelineRun entry: " + e.getMessage());
-        }
-
         if(!azureResponse.getStatusCode().is2xxSuccessful()){
-            throw new InternalServerException(
-                    ExecutorApiStandardErrors.SC500_50_EXECUTOR_SERVICE_ERROR,
-                    "Azure DevOps responded with an internal server error: " + azureResponseBody
-            );
+
+            switch (azureResponse.getStatusCode()) {
+                case UNAUTHORIZED:
+                    throw new InternalServerException(
+                            ExecutorApiStandardErrors.SC401_01_EXECUTOR_UNATHORIZED,
+                            "Missing credentials - " + azureResponseBody
+                    );
+                case FORBIDDEN:
+                    throw new InternalServerException(
+                            ExecutorApiStandardErrors.SC403_01_EXECUTOR_FORBIDDEN,
+                            "User does not have the permission to run the pipeline - " + azureResponseBody
+                    );
+                default:
+                    throw new InternalServerException(
+                            ExecutorApiStandardErrors.SC500_50_EXECUTOR_SERVICE_ERROR,
+                            "Azure DevOps responded with an error: " + azureResponseBody
+                    );
+            }
+
         } else {
+
+            try {
+
+                PipelineRun pipelineRun = new PipelineRun();
+                pipelineRun.setTaskId(taskId);
+                pipelineRun.setRunId(azureResponseBody.getRunId());
+                pipelineRun.setPipelineId(templateResource.getPipelineId());
+                pipelineRun.setOrganization(templateResource.getOrganization());
+                pipelineRun.setProject(templateResource.getProject());
+                pipelineRun.setPipelineName(azureResponseBody.getName());
+                pipelineRun.setResult(azureResponseBody.getResult());
+                pipelineRun.setVariables(azureResponseBody.getVariables());
+                pipelineRun.setTemplateParameters(azureResponseBody.getTemplateParameters());
+                pipelineRun.setCreatedAt(azureResponseBody.getCreatedDate());
+                pipelineRun.setStatus(azureResponseBody.getState());
+                pipelineRun.setFinishedAt(azureResponseBody.getFinishedDate());
+                pipelineRunRepository.saveAndFlush(pipelineRun);
+
+            } catch (Exception e) {
+                logger.error("Error creating PipelineRun entry: " + e.getMessage());
+            }
+
             logger.info("Pipeline run posted successfully");
+
             return azureResponseBody;
+
         }
 
-    }
-
-    private ConfigurationsResource addParamsFromContext(ConfigurationsResource configurationsResource) {
-
-        if(configurationsResource.getContext() != null && configurationsResource.getParams() != null) {
-            Map<String, String> params = parameterService.extractParamsFromContext(
-                    configurationsResource.getParams(),
-                    configurationsResource.getContext()
-            );
-            configurationsResource.setParams(params);
-        }
-
-        configurationsResource.setContext(null);
-
-        return configurationsResource;
     }
 
     public TaskStatus getPipelineRunStatus(Long taskId) {
@@ -142,17 +146,56 @@ public class PipelineService {
         );
         AzureRunResource azureResponseBody = azureRunResponse.getBody();
 
-        pipelineRun.setResult(azureResponseBody.getResult());
-        pipelineRun.setVariables(azureResponseBody.getVariables());
-        pipelineRun.setStatus(azureResponseBody.getState());
-        pipelineRun.setFinishedAt(azureResponseBody.getFinishedDate());
+        if(!azureRunResponse.getStatusCode().is2xxSuccessful()){
 
-        pipelineRun = pipelineRunRepository.saveAndFlush(pipelineRun);
+            switch (azureRunResponse.getStatusCode()) {
+                case UNAUTHORIZED:
+                    throw new InternalServerException(
+                            ExecutorApiStandardErrors.SC401_01_EXECUTOR_UNATHORIZED,
+                            "Missing credentials - " + azureResponseBody
+                    );
+                case FORBIDDEN:
+                    throw new InternalServerException(
+                            ExecutorApiStandardErrors.SC403_01_EXECUTOR_FORBIDDEN,
+                            "User does not have the permission to get the run infos - " + azureResponseBody
+                    );
+                default:
+                    throw new InternalServerException(
+                            ExecutorApiStandardErrors.SC500_50_EXECUTOR_SERVICE_ERROR,
+                            "Azure DevOps responded with an error: " + azureResponseBody
+                    );
+            }
 
-        PipelineRunResource pipelineRunResource = pipelineRunMapper.toResource(pipelineRun);
+        } else {
 
-        return pipelineRunResource.getStatus();
+            pipelineRun.setResult(azureResponseBody.getResult());
+            pipelineRun.setVariables(azureResponseBody.getVariables());
+            pipelineRun.setStatus(azureResponseBody.getState());
+            pipelineRun.setFinishedAt(azureResponseBody.getFinishedDate());
 
+            pipelineRun = pipelineRunRepository.saveAndFlush(pipelineRun);
+
+            PipelineRunResource pipelineRunResource = pipelineRunMapper.toResource(pipelineRun);
+
+            return pipelineRunResource.getStatus();
+
+        }
+
+    }
+
+    private ConfigurationsResource addParamsFromContext(ConfigurationsResource configurationsResource) {
+
+        if(configurationsResource.getContext() != null && configurationsResource.getParams() != null) {
+            Map<String, String> params = parameterService.extractParamsFromContext(
+                    configurationsResource.getParams(),
+                    configurationsResource.getContext()
+            );
+            configurationsResource.setParams(params);
+        }
+
+        configurationsResource.setContext(null);
+
+        return configurationsResource;
     }
 
 }

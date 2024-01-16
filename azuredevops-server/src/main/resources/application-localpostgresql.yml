@@ -16,7 +16,7 @@ server:
 ############################################
 spring:
   # Profile
-  profile: dev
+  profile: localpostgresql
   # Security
   security:
     oauth2:
@@ -43,26 +43,25 @@ spring:
           lob:
             non_contextual_creation: true
         format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect # Or PostgreSQLDialect
+        globally_quoted_identifiers: true
         default_schema: ODMEXECUTOR
-    database-platform: org.hibernate.dialect.H2Dialect
   # DB
   datasource:
-    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;
-    driverClassName: org.h2.Driver
-    username: sa
-    password:
+    url: jdbc:postgresql://localhost:5432/odmpdb
+    username: postgres
+    password: postgres
   h2:
     console:
-      enabled: true
-      path: /h2-console
+      enabled: false
   # FlyWay configuration
   # More: https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties.data-migration
   flyway:
     enabled: true
-    url: jdbc:h2:mem:testdb
-    user: sa
-    password:
+    url: jdbc:postgresql://localhost:5432/odmpdb
+    user: postgres
+    password: postgres
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
     schemas: ODMEXECUTOR
-    locations: classpath:db/migration/h2
+    locations: classpath:db/migration/postgresql
     clean-on-validation-error: true

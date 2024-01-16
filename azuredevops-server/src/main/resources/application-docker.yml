@@ -16,7 +16,7 @@ server:
 ############################################
 spring:
   # Profile
-  profile: dev
+  profile: docker
   # Security
   security:
     oauth2:
@@ -34,7 +34,7 @@ spring:
   # Database
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none  # validate - right one is validate, but it doesn't work with mysql
       #show-sql: true
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
@@ -45,7 +45,7 @@ spring:
           lob:
             non_contextual_creation: true
         globally_quoted_identifiers: true
-        default_schema: ${DATABASE_SCHEMA}
+        default_schema: ODMEXECUTOR
   datasource:
     url: ${DATABASE_URL}?allowPublicKeyRetrieval=true&useSSL=false
     username: ${DATABASE_USERNAME}
@@ -54,6 +54,8 @@ spring:
     console:
       enabled: ${H2_CONSOLE_ENABLED}
       path: /${H2_CONSOLE_PATH}
+      settings:
+        web-allow-others: true
   # FlyWay configuration
   # More: https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties.data-migration
   flyway:
@@ -62,6 +64,6 @@ spring:
     user: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
-    schemas: ${DATABASE_SCHEMA}
+    #schemas: ${FLYWAY_SCHEMA} # - Not working with MySql
     locations: classpath:db/migration/${FLYWAY_SCRIPTS_DIR}
     clean-on-validation-error: true

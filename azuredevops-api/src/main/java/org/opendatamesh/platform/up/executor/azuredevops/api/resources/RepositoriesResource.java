@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class RepositoriesResource {
-    String refName;
+    private String refName;
 }

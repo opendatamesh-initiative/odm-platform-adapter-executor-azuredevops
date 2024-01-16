@@ -14,11 +14,12 @@ import java.util.Map;
 @Entity(name = "PipelineRun")
 @Table(name = "PIPELINE_RUNS", schema = "ODMEXECUTOR")
 public class PipelineRun {
+
     @Id
-    @Column(name="TASKID")
+    @Column(name="TASK_ID")
     protected Long taskId;
 
-    @Column(name="RUNID")
+    @Column(name="RUN_ID")
     protected Long runId;
 
     @Column(name="ORGANIZATION")
@@ -27,8 +28,11 @@ public class PipelineRun {
     @Column(name="PROJECT")
     protected String project;
 
-    @Column(name="PIPELINEID")
+    @Column(name="PIPELINE_ID")
     protected String pipelineId;
+
+    @Column(name="PIPELINE_NAME")
+    protected String pipelineName;
 
     @Column(name="STATUS")
     @Enumerated(EnumType.STRING)
@@ -41,6 +45,10 @@ public class PipelineRun {
     @Column(name = "VARIABLES")
     @Convert(converter = HashMapConverter.class)
     protected Map<String, AzureVariable> variables;
+
+    @Column(name = "TEMPLATE_PARAMETERS")
+    @Convert(converter = HashMapConverter.class)
+    protected Map<String, String> templateParameters;
 
     @Column(name = "CREATED_AT")
     protected String createdAt;

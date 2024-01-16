@@ -10,10 +10,10 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PipelineResource {
 
-    ResourcesResource resources;
+    private ResourcesResource resources;
 
     private Map<String, String> templateParameters;
 
-    List<String> stagesToSkip;
+    private List<String> stagesToSkip;
 
 }

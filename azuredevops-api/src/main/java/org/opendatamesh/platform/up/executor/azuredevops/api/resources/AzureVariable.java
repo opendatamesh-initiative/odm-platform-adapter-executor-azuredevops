@@ -9,9 +9,9 @@ import lombok.Data;
 public class AzureVariable {
 
     @JsonProperty("isSecret")
-    Boolean isSecret;
+    private Boolean isSecret;
 
     @JsonProperty("value")
-    String value;
+    private String value;
 
 }

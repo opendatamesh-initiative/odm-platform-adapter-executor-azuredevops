@@ -30,6 +30,10 @@ public class PipelineRunResource {
     @Schema(description = "Pipeline ID", required = true)
     private String pipelineId;
 
+    @JsonProperty("pipelineName")
+    @Schema(description = "Pipeline name")
+    private String pipelineName;
+
     @JsonProperty("runId")
     @Schema(description = "Id from Azure DevOps run", required = true)
     private Long runId;
@@ -46,8 +50,12 @@ public class PipelineRunResource {
     @Schema(description = "Variables from Azure DevOps run")
     private Map<String, AzureVariable> variables;
 
+    @JsonProperty("templateParameters")
+    @Schema(description = "Template parameters from Azure DevOps run")
+    private Map<String, String> templateParameters;
+
     @JsonProperty("createdAt")
-    @Schema(description = "Creation date of the run on Azure DevOps")
+    @Schema(description = "Creation date of the run on Azure DevOps", required = true)
     private String createdAt;
 
     @JsonProperty("finishedAt")
