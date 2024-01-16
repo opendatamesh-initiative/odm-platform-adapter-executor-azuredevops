@@ -1,19 +1,17 @@
 package org.opendatamesh.platform.up.executor.azuredevops.api.resources;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-
-import java.util.List;
-import java.util.Map;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PipelineResource {
+public class AzureVariable {
 
-    private ResourcesResource resources;
+    @JsonProperty("isSecret")
+    private Boolean isSecret;
 
-    private Map<String, String> templateParameters;
-
-    private List<String> stagesToSkip;
+    @JsonProperty("value")
+    private String value;
 
 }

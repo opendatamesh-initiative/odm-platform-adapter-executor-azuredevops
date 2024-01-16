@@ -44,6 +44,7 @@
     </repositories>
 
     <dependencies>
+
         <!-- Spring Framework-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -56,6 +57,16 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!-- Jackson -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
 
         <!-- Lombok -->
@@ -73,6 +84,37 @@
             <version>1.5.3.Final</version>
         </dependency>
 
+        <!-- Database -->
+        <!-- H2 -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- PostreSQL -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- MySQL -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.33</version>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- Flyway -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <!--<version>9.8.1</version>-->
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-mysql</artifactId>
+        </dependency>
+
         <!-- ODM -->
         <dependency>
             <groupId>org.opendatamesh</groupId>
@@ -80,7 +122,6 @@
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
-
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-up-services-executor-azuredevops-api</artifactId>
@@ -88,11 +129,8 @@
             <scope>compile</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -107,6 +145,11 @@
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                             <version>1.18.24</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>0.2.0</version>
                         </path>
                         <path>
                             <groupId>org.mapstruct</groupId>
