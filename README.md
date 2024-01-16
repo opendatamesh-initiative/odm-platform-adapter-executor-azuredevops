@@ -202,7 +202,7 @@ docker run --name odm-executor-azuredevops-mysql-app -p 9003:9003 --net host odm
 
 **Postgres**
 ```bash
-docker run ---name odm-executor-azuredevops-postgres-app -p 9003:9003 --net host odm-executor-azuredevops-postgres-app
+docker run --name odm-executor-azuredevops-postgres-app -p 9003:9003 --net host odm-executor-azuredevops-postgres-app
 ```
 
 ### Stop application

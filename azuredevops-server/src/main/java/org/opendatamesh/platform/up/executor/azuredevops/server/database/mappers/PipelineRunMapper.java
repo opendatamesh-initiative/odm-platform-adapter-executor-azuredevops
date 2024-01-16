@@ -16,6 +16,9 @@ public interface PipelineRunMapper {
 
     @Named("statusEnum")
     default AzureRunState statusEnum(TaskStatus status) {
+
+        if (status == null) return null;
+
         switch (status) {
             case FAILED:
             case PROCESSED:
@@ -29,6 +32,9 @@ public interface PipelineRunMapper {
 
     @Named("statusEnum")
     default TaskStatus statusEnum(AzureRunState status) {
+
+        if (status == null) return null;
+
         switch (status) {
             case canceling:
                 return TaskStatus.ABORTED;
@@ -43,6 +49,9 @@ public interface PipelineRunMapper {
 
     @Named("resultEnum")
     default AzureRunResult resultEnum(TaskStatus result) {
+
+        if (result == null) return null;
+
         switch (result) {
             case ABORTED:
                 return AzureRunResult.canceled;
@@ -57,6 +66,10 @@ public interface PipelineRunMapper {
 
     @Named("resultEnum")
     default TaskStatus resultEnum(AzureRunResult result) {
+
+        if (result == null)
+            return null;
+
         switch (result) {
             case canceled:
                 return TaskStatus.ABORTED;
