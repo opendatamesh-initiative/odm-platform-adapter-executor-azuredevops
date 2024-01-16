@@ -80,7 +80,6 @@
             <version>0.7.0</version>
             <scope>compile</scope>
         </dependency>
-
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-up-services-executor-azuredevops-api</artifactId>
