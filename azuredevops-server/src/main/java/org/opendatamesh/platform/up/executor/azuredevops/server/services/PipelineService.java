@@ -7,10 +7,9 @@ import org.opendatamesh.platform.up.executor.api.resources.ExecutorApiStandardEr
 import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
 import org.opendatamesh.platform.up.executor.azuredevops.api.clients.AzureDevOpsClient;
 import org.opendatamesh.platform.up.executor.azuredevops.api.resources.AzureRunResource;
+import org.opendatamesh.platform.up.executor.azuredevops.api.resources.AzureRunState;
 import org.opendatamesh.platform.up.executor.azuredevops.api.resources.PipelineResource;
-import org.opendatamesh.platform.up.executor.azuredevops.api.resources.PipelineRunResource;
 import org.opendatamesh.platform.up.executor.azuredevops.server.database.entities.PipelineRun;
-import org.opendatamesh.platform.up.executor.azuredevops.server.database.mappers.PipelineRunMapper;
 import org.opendatamesh.platform.up.executor.azuredevops.server.database.repositories.PipelineRunRepository;
 import org.opendatamesh.platform.up.executor.azuredevops.server.mappers.PipelineMapper;
 import org.opendatamesh.platform.up.executor.azuredevops.server.resources.odm.ConfigurationsResource;
@@ -18,7 +17,9 @@ import org.opendatamesh.platform.up.executor.azuredevops.server.resources.odm.Te
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -37,10 +38,13 @@ public class PipelineService {
     protected ParameterService parameterService;
 
     @Autowired
-    protected PipelineRunMapper pipelineRunMapper;
-
-    @Autowired
     protected PipelineRunRepository pipelineRunRepository;
+
+    @Value("${polling.retries}")
+    private Integer pollingNumRetries;
+
+    @Value("${polling.interval}")
+    private Integer pollingIntervalSeconds;
 
     private static final Logger logger = LoggerFactory.getLogger(PipelineService.class);
 
@@ -126,6 +130,7 @@ public class PipelineService {
 
     }
 
+    @Async
     public TaskStatus getPipelineRunStatus(Long taskId) {
 
         Optional<PipelineRun> pipelineRunOptional = pipelineRunRepository.findById(taskId);
@@ -138,12 +143,33 @@ public class PipelineService {
 
         PipelineRun pipelineRun = pipelineRunOptional.get();
 
-        ResponseEntity<AzureRunResource>  azureRunResponse = azureDevOpsClient.getAzureRun(
-                pipelineRun.getOrganization(),
-                pipelineRun.getProject(),
-                pipelineRun.getPipelineId(),
-                pipelineRun.getRunId()
-        );
+        int counter = 0;
+        ResponseEntity<AzureRunResource> azureRunResponse = null;
+
+        while (counter < pollingNumRetries) {
+
+            azureRunResponse = azureDevOpsClient.getAzureRun(
+                    pipelineRun.getOrganization(),
+                    pipelineRun.getProject(),
+                    pipelineRun.getPipelineId(),
+                    pipelineRun.getRunId()
+            );
+
+            if(
+                    azureRunResponse.getStatusCode().is2xxSuccessful() &&
+                            azureRunResponse.getBody().getState().equals(AzureRunState.completed)
+            )
+                break;
+
+            try {
+                Thread.sleep(pollingIntervalSeconds * 1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                logger.warn("Polling thread error: " + e.getMessage().toString());
+            }
+
+        }
+
         AzureRunResource azureResponseBody = azureRunResponse.getBody();
 
         if(!azureRunResponse.getStatusCode().is2xxSuccessful()){
@@ -175,9 +201,16 @@ public class PipelineService {
 
             pipelineRun = pipelineRunRepository.saveAndFlush(pipelineRun);
 
-            PipelineRunResource pipelineRunResource = pipelineRunMapper.toResource(pipelineRun);
-
-            return pipelineRunResource.getStatus();
+            switch (pipelineRun.getResult()) {
+                case succeeded:
+                    return TaskStatus.PROCESSED;
+                case failed:
+                    return TaskStatus.FAILED;
+                case canceled:
+                    return TaskStatus.ABORTED;
+                default:
+                    return null;
+            }
 
         }
 
