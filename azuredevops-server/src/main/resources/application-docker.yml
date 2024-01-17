@@ -11,6 +11,10 @@ server:
   servlet:
     context-path: /api/v1/up/executor
 
+polling:
+  retries: 3
+  interval: 10 # Seconds
+
 ############################################
 # Spring configurations
 ############################################
