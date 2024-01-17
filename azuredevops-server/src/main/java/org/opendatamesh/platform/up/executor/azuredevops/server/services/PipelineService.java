@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class PipelineService {
@@ -131,7 +132,7 @@ public class PipelineService {
     }
 
     @Async
-    public TaskStatus getPipelineRunStatus(Long taskId) {
+    public CompletableFuture<TaskStatus> getPipelineRunStatus(Long taskId) {
 
         Optional<PipelineRun> pipelineRunOptional = pipelineRunRepository.findById(taskId);
 
@@ -168,6 +169,8 @@ public class PipelineService {
                 logger.warn("Polling thread error: " + e.getMessage().toString());
             }
 
+            counter++;
+
         }
 
         AzureRunResource azureResponseBody = azureRunResponse.getBody();
@@ -203,13 +206,13 @@ public class PipelineService {
 
             switch (pipelineRun.getResult()) {
                 case succeeded:
-                    return TaskStatus.PROCESSED;
+                    return CompletableFuture.completedFuture(TaskStatus.PROCESSED);
                 case failed:
-                    return TaskStatus.FAILED;
+                    return CompletableFuture.completedFuture(TaskStatus.FAILED);
                 case canceled:
-                    return TaskStatus.ABORTED;
+                    return CompletableFuture.completedFuture(TaskStatus.ABORTED);
                 default:
-                    return null;
+                    return CompletableFuture.completedFuture(null);
             }
 
         }

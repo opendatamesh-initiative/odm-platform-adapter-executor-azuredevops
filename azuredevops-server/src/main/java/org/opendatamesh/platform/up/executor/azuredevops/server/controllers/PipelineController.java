@@ -14,6 +14,9 @@ import org.opendatamesh.platform.up.executor.azuredevops.server.services.Pipelin
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
 @RestController
 public class PipelineController extends AbstractExecutorController {
 
@@ -65,7 +68,12 @@ public class PipelineController extends AbstractExecutorController {
 
     @Override
     public TaskStatus readTaskStatus(Long taskId) {
-        return pipelineService.getPipelineRunStatus(taskId);
+        CompletableFuture<TaskStatus> taskStatusAfterPolling = pipelineService.getPipelineRunStatus(taskId);
+        try {
+            return taskStatusAfterPolling.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
