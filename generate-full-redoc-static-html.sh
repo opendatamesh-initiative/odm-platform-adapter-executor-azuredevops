@@ -31,7 +31,7 @@ if [ -z "$REDOC_FILE" ]; then
 fi
 
 # Copy and rename all redoc-static.html files to the aggregated documentation directory
-NEW_NAME="${DOC_DIR}/executor-azuredevops-redoc-static.html"
+NEW_NAME="${DOC_DIR}/executor-azuredevops-server.html"
 cp "$REDOC_FILE" "$NEW_NAME"
 echo "Renamed and copied $REDOC_FILE to $NEW_NAME"
 
