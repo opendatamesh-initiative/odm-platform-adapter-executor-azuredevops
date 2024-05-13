@@ -1,10 +1,10 @@
-name: odm-platform-up-services-executor-azuredevops CI/CD
+name: odm-platform-adapter-executor-azuredevops CI/CD
 on:
   push:
     tags:
       - '*'
 env:
-  IMAGE_NAME: odm-platform-up-services-executor-azuredevops
+  IMAGE_NAME: odm-platform-adapter-executor-azuredevops
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -58,7 +58,7 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
       - name: Push image to Container Registry
         run: |
-          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/odm-platform-up-services-executor-azuredevops
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/odm-platform-adapter-executor-azuredevops
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           echo IMAGE_ID=$IMAGE_ID
           docker tag $IMAGE_NAME $IMAGE_ID:${{ env.TAG_VERSION }}

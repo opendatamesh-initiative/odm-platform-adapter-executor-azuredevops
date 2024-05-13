@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.opendatamesh</groupId>
-        <artifactId>odm-platform-up-services-executor-azuredevops</artifactId>
+        <artifactId>odm-platform-adapter-executor-azuredevops</artifactId>
         <version>1.0.0</version>
         <relativePath>../</relativePath>
     </parent>
 
     <groupId>org.opendatamesh</groupId>
-    <artifactId>odm-platform-up-services-executor-azuredevops-api</artifactId>
+    <artifactId>odm-platform-adapter-executor-azuredevops-api</artifactId>
     <version>1.0.0</version>
     <name>Azure DevOps executor API</name>
     <description>Implementation of executor API for Azure DevOps</description>

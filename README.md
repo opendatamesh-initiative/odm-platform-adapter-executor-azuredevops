@@ -1,6 +1,6 @@
-# Open Data Mesh adapter for Azure DevOps
+# Open Data Mesh Adapter for Azure DevOps
 
-[![Build](https://github.com/opendatamesh-initiative/odm-platform-up-services-executor-azuredevops/workflows/odm-platform-up-services-executor-azuredevops%20CI/badge.svg)](https://github.com/opendatamesh-initiative/odm-platform-up-services-executor-azuredevops/actions) [![Release](https://github.com/opendatamesh-initiative/odm-platform-up-services-executor-azuredevops/workflows/odm-platform-up-services-executor-azuredevops%20CI%2FCD/badge.svg)](https://github.com/opendatamesh-initiative/odm-platform-up-services-executor-azuredevops/actions)
+[![Build](https://github.com/opendatamesh-initiative/odm-platform-adapter-executor-azuredevops/workflows/odm-platform-adapter-executor-azuredevops%20CI/badge.svg)](https://github.com/opendatamesh-initiative/odm-platform-adapter-executor-azuredevops/actions) [![Release](https://github.com/opendatamesh-initiative/odm-platform-adapter-executor-azuredevops/workflows/odm-platform-adapter-executor-azuredevops%20CI%2FCD/badge.svg)](https://github.com/opendatamesh-initiative/odm-platform-adapter-executor-azuredevops/actions)
 
 Open Data Mesh Platform is a platform that manages the full lifecycle of a data product from deployment to retirement. It uses the Data Product Descriptor Specification to create, deploy and operate data product containers in a mesh architecture. This repository contains the services exposed by the executor of Azure DevOps tasks.
 
@@ -84,8 +84,8 @@ mvn clean install -DskipTests
 Clone the repository and move to the project root folder
 
 ```bash
-git git clone https://github.com/opendatamesh-initiative/odm-platform-up-services-executor-azuredevops.git
-cd odm-platform-up-services-executor-azuredevops
+git git clone https://github.com/opendatamesh-initiative/odm-platform-adapter-executor-azuredevops.git
+cd odm-platform-adapter-executor-azuredevops
 ```
 
 ### Compile project
@@ -99,14 +99,14 @@ mvn clean package spring-boot:repackage -DskipTests
 Run the application:
 
 ```bash
-java -jar azuredevops-server/target/odm-platform-up-services-executor-azuredevops-server-1.0.0.jar
+java -jar azuredevops-server/target/odm-platform-adapter-executor-azuredevops-server-1.0.0.jar
 ```
 
 ### Stop application
 To stop the application type CTRL+C or just close the shell. To start it again re-execute the following command:
 
 ```bash
-java -jar azuredevops-server/target/odm-platform-up-services-executor-azuredevops-server-1.0.0.jar
+java -jar azuredevops-server/target/odm-platform-adapter-executor-azuredevops-server-1.0.0.jar
 ```
 
 ## Run with Docker
@@ -116,8 +116,8 @@ java -jar azuredevops-server/target/odm-platform-up-services-executor-azuredevop
 Clone the repository and move it to the project root folder
 
 ```bash
-git clone https://github.com/opendatamesh-initiative/odm-platform-up-services-executor-azuredevops.git
-cd odm-platform-up-services-executor-azuredevops
+git clone https://github.com/opendatamesh-initiative/odm-platform-adapter-executor-azuredevops.git
+cd odm-platform-adapter-executor-azuredevops
 ```
 
 Here you can find the Dockerfile which creates an image containing the application by directly copying it from the build executed locally (i.e. from `target` folder).
@@ -233,8 +233,8 @@ docker rm odm-executor-azuredevops-mysql-app
 Clone the repository and move it to the project root folder
 
 ```bash
-git git clone https://github.com/opendatamesh-initiative/odm-platform-up-services-executor-azuredevops.git
-cd odm-platform-up-services-executor-azuredevops
+git git clone https://github.com/opendatamesh-initiative/odm-platform-adapter-executor-azuredevops.git
+cd odm-platform-adapter-executor-azuredevops
 ```
 
 ### Compile project

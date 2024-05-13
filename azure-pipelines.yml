@@ -28,7 +28,7 @@ stages:
             inputs:
               sshEndpoint: "odm-platform"
               sourceFolder: './azuredevops-server/target' # Optional
-              contents: 'odm-platform-up-services-executor-azuredevops-server-1.0.0.jar'
+              contents: 'odm-platform-adapter-executor-azuredevops-server-1.0.0.jar'
               targetFolder: "/home/odm" # Optional
               overwrite: true # Optional
 

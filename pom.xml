@@ -30,12 +30,12 @@ License.
     </parent>
 
     <groupId>org.opendatamesh</groupId>
-    <artifactId>odm-platform-up-services-executor-azuredevops</artifactId>
+    <artifactId>odm-platform-adapter-executor-azuredevops</artifactId>
     <name>Azure DevOps Executor</name>
 
     <description>Implementation of Azure DevOps executor</description>
     <version>1.0.0</version>
-    <url>https://github.com/opendatamesh-initiative/odm-platform-up-services-executor-azuredevops</url>
+    <url>https://github.com/opendatamesh-initiative/odm-platform-adapter-executor-azuredevops</url>
     <packaging>pom</packaging>
 
     <licenses>
@@ -46,9 +46,9 @@ License.
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:opendatamesh-initiative/odm-platform-up-services-executor-azuredevops</connection>
-        <developerConnection>scm:git:git@github.com:opendatamesh-initiative/odm-platform-up-services-executor-azuredevops</developerConnection>
-        <url>scm:git:git@github.com:opendatamesh-initiative/odm-platform-up-services-executor-azuredevops</url>
+        <connection>scm:git:git@github.com:opendatamesh-initiative/odm-platform-adapter-executor-azuredevops</connection>
+        <developerConnection>scm:git:git@github.com:opendatamesh-initiative/odm-platform-adapter-executor-azuredevops</developerConnection>
+        <url>scm:git:git@github.com:opendatamesh-initiative/odm-platform-adapter-executor-azuredevops</url>
     </scm>
 
     <developers>
@@ -88,7 +88,7 @@ License.
                 <repository>
                     <id>github</id>
                     <name>GitHub Packages</name>
-                    <url>https://maven.pkg.github.com/opendatamesh-initiative/odm-platform-up-services-executor-azuredevops/</url>
+                    <url>https://maven.pkg.github.com/opendatamesh-initiative/odm-platform-adapter-executor-azuredevops/</url>
                 </repository>
             </distributionManagement>
         </profile>

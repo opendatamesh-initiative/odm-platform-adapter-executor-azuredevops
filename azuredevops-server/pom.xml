@@ -6,13 +6,13 @@
 
     <parent>
         <groupId>org.opendatamesh</groupId>
-        <artifactId>odm-platform-up-services-executor-azuredevops</artifactId>
+        <artifactId>odm-platform-adapter-executor-azuredevops</artifactId>
         <version>1.0.0</version>
         <relativePath>../</relativePath>
     </parent>
 
     <groupId>org.opendatamesh</groupId>
-    <artifactId>odm-platform-up-services-executor-azuredevops-server</artifactId>
+    <artifactId>odm-platform-adapter-executor-azuredevops-server</artifactId>
     <version>1.0.0</version>
     <name>Azure DevOps executor server</name>
     <description>Implementation of executor server for Azure DevOps</description>
@@ -124,7 +124,7 @@
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-platform-up-services-executor-azuredevops-api</artifactId>
+            <artifactId>odm-platform-adapter-executor-azuredevops-api</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>

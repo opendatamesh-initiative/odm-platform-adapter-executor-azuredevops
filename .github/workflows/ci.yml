@@ -1,4 +1,4 @@
-name: odm-platform-up-services-executor-azuredevops CI
+name: odm-platform-adapter-executor-azuredevops CI
 on:
   push:
     branches: # Execute on "main" branch and product branches, avoid others

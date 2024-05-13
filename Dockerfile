@@ -2,7 +2,7 @@ FROM openjdk:17-alpine
 
 VOLUME /tmp
 
-COPY azuredevops-server/target/odm-platform-up-services-executor-azuredevops-server-*.jar ./application.jar
+COPY azuredevops-server/target/odm-platform-adapter-executor-azuredevops-server-*.jar ./application.jar
 
 ARG SPRING_PROFILES_ACTIVE=docker
 ARG JAVA_OPTS
