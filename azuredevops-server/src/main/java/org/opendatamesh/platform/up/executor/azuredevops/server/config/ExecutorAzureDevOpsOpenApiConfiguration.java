@@ -17,11 +17,11 @@ public class ExecutorAzureDevOpsOpenApiConfiguration {
         return new OpenAPI()
                 .components(new Components())
                 .info(new Info()
-                        .title("ODM Platform Utility Plane Executor Azure DevOps Service API Reference")
-                        .summary("This page describe tha API exposed by the Executor Azure DevOps Server of the Utility Plane " +
+                        .title("ODM Platform Adapter Executor Azure DevOps Service API Reference")
+                        .summary("This page describe tha API exposed by the Executor Azure DevOps Server of the Adapters of the Utility Plane " +
                                 "of the Open Data Mesh Platform.")
                         .description(
-                                "This page describe tha API exposed by the Executor Azure DevOps Server of the Product Plane of the Open Data Mesh Platform." +
+                                "This page describe tha API exposed by the Executor Azure DevOps Server of the Adapters of the Utility Plane of the Open Data Mesh Platform." +
 
                                 "\r\n# Overview" +
                                 "\r\nThe Executor Azure DevOps Module of the Open Data Mesh platform manages the execution requests for Azure DevOps pipelines."
