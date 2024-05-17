@@ -38,6 +38,9 @@ jobs:
         run: |
           echo "TAG_VERSION=$( echo ${{github.ref_name}} | sed 's/[^0-9.]//g' )" >> $GITHUB_ENV
           echo "BRANCH_NAME=$( echo ${{ github.event.base_ref }} | sed 's|refs/heads/||' )" >> $GITHUB_ENV
+          echo "AZURE_TENANT_ID=$( echo ${{ secrets.AZURE_TENANT_ID }} )" >> $GITHUB_ENV
+          echo "AZURE_ODM_APP_CLIENT_ID=$( echo ${{ secrets.AZURE_ODM_APP_CLIENT_ID }} )" >> $GITHUB_ENV
+          echo "AZURE_ODM_APP_CLIENT_SECRET=$( echo ${{ secrets.AZURE_ODM_APP_CLIENT_SECRET }} )" >> $GITHUB_ENV
       - name: Update versions
         run: mvn versions:set -DgenerateBackupPoms=false -DnewVersion=${{ env.TAG_VERSION }}
       - name: Push new version
