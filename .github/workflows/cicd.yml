@@ -75,7 +75,7 @@ jobs:
         run: docker build . --file Dockerfile --tag opendatamesh/${IMAGE_NAME}:${{ env.TAG_VERSION }}
       - name: Docker push
         run: docker push opendatamesh/${IMAGE_NAME}:${{ env.TAG_VERSION }}
-      #- name: Publish API doc --> it needs REAL env variables in order to work, fix it
-      #  run: |
-      #    ./generate-full-redoc-static-html.sh
-      #    ./upload-redoc-static-html-to-github.sh ${{ env.TAG_VERSION }}
+      - name: Publish API doc --> it needs REAL env variables in order to work, fix it
+        run: |
+          ./generate-full-redoc-static-html.sh
+          ./upload-redoc-static-html-to-github.sh ${{ env.TAG_VERSION }}
